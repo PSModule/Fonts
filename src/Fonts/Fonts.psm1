@@ -293,12 +293,13 @@ function Uninstall-Font {
         return $runtimeParameterDictionary
     }
 
-    begin {}
-
-    process {
+    begin {
         if ($Scope -eq 'AllUsers' -and -not (Test-Administrator)) {
             throw "Administrator rights are required to uninstall fonts. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
+    }
+
+    process {
 
         $Name = $PSBoundParameters['Name']
 
