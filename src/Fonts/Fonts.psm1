@@ -361,3 +361,5 @@ function Test-Administrator {
     $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     return $isAdmin
 }
+
+Export-ModuleMember -Function Install-Font, Get-InstalledFont, Uninstall-Font
