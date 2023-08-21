@@ -1,29 +1,4 @@
-﻿function Get-FileDetails {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string] $Path
-    )
-
-    $shell = New-Object -ComObject Shell.Application
-    $shellFolder = $shell.Namespace($FontFile.Directory.FullName)
-    $shellFile = $shellFolder.ParseName($FontFile.name)
-
-    $fileDetails = New-Object pscustomobject
-
-    foreach ($i in 0..1000) {
-        $propertyName = $shellfolder.GetDetailsOf($null, $i)
-        $propertyValue = $shellfolder.GetDetailsOf($shellfile, $i)
-        if (-not [string]::IsNullOrEmpty($propertyValue)) {
-            Write-Verbose "[$propertyName] - [$propertyValue]"
-            $fileDetails | Add-Member -MemberType NoteProperty -Name $propertyName -Value $propertyValue
-        }
-    }
-    return $fileDetails
-}
-
-
-$Path = 'C:\Users\AD08640\Downloads\Hack\HackNerdFont-Regular.ttf'
+﻿$Path = 'C:\Users\AD08640\Downloads\Hack\HackNerdFont-Regular.ttf'
 Install-Font -Path $Path -Verbose
 Install-Font -Path $Path -Verbose -Scope AllUsers -Force
 Install-Font -Path $Path -Verbose -Force
