@@ -362,4 +362,4 @@ function Test-Administrator {
     return $isAdmin
 }
 
-Export-ModuleMember -Function Install-Font, Get-InstalledFont, Uninstall-Font
+Export-ModuleMember -Function 'Install-Font', 'Get-InstalledFont', 'Uninstall-Font'
