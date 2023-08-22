@@ -80,7 +80,7 @@ function Install-Font {
         $fontFolderPath = $Scope -eq 'CurrentUser' ? "$env:LOCALAPPDATA\Microsoft\Windows\Fonts" : "$($env:windir)\Fonts"
         $fontRegistryPath = $Scope -eq 'CurrentUser' ? 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts' : 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
 
-        if ($Scope -eq 'AllUsers' -and -not (Test-Administrator)) {
+        if ($Scope -eq 'AllUsers' -and -not (IsAdmin)) {
             throw "Administrator rights are required to install fonts in '$fontFolderPath'. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
     }
@@ -183,22 +183,22 @@ function Install-Font {
     Retrieves the installed fonts.
 
 .EXAMPLE
-    Get-InstalledFont
+    Get-Font
 
     Gets all the fonts installed for the current user.
 
 .EXAMPLE
-    Get-InstalledFont -Name 'Arial*'
+    Get-Font -Name 'Arial*'
 
     Gets all the fonts installed for the current user that start with 'Arial'.
 
 .EXAMPLE
-    Get-InstalledFont -Scope 'AllUsers'
+    Get-Font -Scope 'AllUsers'
 
     Gets all the fonts installed for all users.
 
 .EXAMPLE
-    Get-InstalledFont -Name 'Calibri' -Scope 'AllUsers'
+    Get-Font -Name 'Calibri' -Scope 'AllUsers'
 
     Gets the font with the name 'Calibri' for all users.
 
@@ -206,7 +206,7 @@ function Install-Font {
     System.Management.Automation.PSCustomObject[]
 
 #>
-function Get-InstalledFont {
+function Get-Font {
     [OutputType([pscustomobject[]])]
     [CmdletBinding()]
     param(
@@ -285,7 +285,7 @@ function Uninstall-Font {
         $parameterAttribute.ValueFromPipeline = $true
         $parameterAttribute.ValueFromPipelineByPropertyName = $true
         $attributeCollection.Add($parameterAttribute)
-        $parameterValidateSet = (Get-InstalledFont -Scope $Scope).Name
+        $parameterValidateSet = (Get-Font -Scope $Scope).Name
         $validateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute($parameterValidateSet)
         $attributeCollection.Add($validateSetAttribute)
         $runtimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($parameterName, [string], $attributeCollection)
@@ -294,7 +294,7 @@ function Uninstall-Font {
     }
 
     begin {
-        if ($Scope -eq 'AllUsers' -and -not (Test-Administrator)) {
+        if ($Scope -eq 'AllUsers' -and -not (IsAdmin)) {
             throw "Administrator rights are required to uninstall fonts. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
     }
@@ -304,7 +304,7 @@ function Uninstall-Font {
         $Name = $PSBoundParameters['Name']
 
         Write-Verbose "[$Name] - Uninstalling font - [$Scope]"
-        $font = Get-InstalledFont -Name $Name -Scope $Scope
+        $font = Get-Font -Name $Name -Scope $Scope
         $filePath = $font.path
 
         Write-Verbose "[$Name] - Removing file [$filePath]"
@@ -342,24 +342,4 @@ function Uninstall-Font {
     }
 }
 
-<#
-.SYNOPSIS
-    Test if the current user is an administrator.
-.DESCRIPTION
-    Test if the current user is an administrator.
-.OUTPUTS
-    Boolean
-.EXAMPLE
-    Test-Administrator
-
-    Returns true if the current user is an administrator.
-#>
-function Test-Administrator {
-    [OutputType([Boolean])]
-    $user = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = New-Object Security.Principal.WindowsPrincipal($user)
-    $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    return $isAdmin
-}
-
-Export-ModuleMember -Function 'Install-Font', 'Get-InstalledFont', 'Uninstall-Font'
+Export-ModuleMember -Function '*' -Alias '*' -Variable '*' -Cmdlet '*'

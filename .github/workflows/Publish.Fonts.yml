@@ -3,9 +3,9 @@ name: Publish [Fonts]
 on:
   push:
     paths:
-    - scripts/**
-    - src/Fonts/**
-    - .github/workflows/Publish.Fonts.yml
+      - scripts/**
+      - src/Fonts/**
+      - .github/workflows/Publish.Fonts.yml
   workflow_dispatch:
 
 defaults:

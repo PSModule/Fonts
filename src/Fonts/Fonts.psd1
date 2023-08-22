@@ -9,31 +9,31 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule = 'Fonts.psm1'
+    RootModule           = 'Fonts.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.0.1'
+    ModuleVersion        = '0.0.1'
 
     # Supported PSEditions
-    # CompatiblePSEditions = @()
+    CompatiblePSEditions = @('Core')
 
     # ID used to uniquely identify this module
-    GUID              = 'a86d9390-13f4-455d-ba63-902a417a92fb'
+    GUID                 = 'a86d9390-13f4-455d-ba63-902a417a92fb'
 
     # Author of this module
-    Author            = 'Marius Storhaug'
+    Author               = 'Marius Storhaug'
 
     # Company or vendor of this module
-    CompanyName       = 'Marius Storhaug'
+    CompanyName          = 'Marius Storhaug'
 
     # Copyright statement for this module
-    Copyright         = '(c) Marius Storhaug. All rights reserved.'
+    Copyright            = '(c) Marius Storhaug. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Manage fonts on a Windows system'
+    Description          = 'Manage fonts on a Windows system'
 
     # Minimum version of the PowerShell engine required by this module
-    # PowerShellVersion = ''
+    PowerShellVersion    = '7.0'
 
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -51,7 +51,12 @@
     # ProcessorArchitecture = ''
 
     # Modules that must be imported into the global environment prior to importing this module
-    # RequiredModules = @()
+    RequiredModules      = @(
+        @{
+            ModuleName    = 'Utilities'
+            ModuleVersion = '0.0'
+        }
+    )
 
     # Assemblies that must be loaded prior to importing this module
     # RequiredAssemblies = @()
@@ -69,20 +74,16 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @(
-        'Install-Font',
-        'Get-InstalledFont',
-        'Uninstall-Font'
-    )
+    FunctionsToExport    = '*'
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport   = @()
+    CmdletsToExport      = '*'
 
     # Variables to export from this module
-    VariablesToExport = '*'
+    VariablesToExport    = '*'
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = @()
+    AliasesToExport      = '*'
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -94,7 +95,7 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData       = @{
+    PrivateData          = @{
 
         PSData = @{
 
@@ -127,7 +128,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    HelpInfoURI       = 'https://mariusstorhaug.github.io/Fonts'
+    HelpInfoURI          = 'https://mariusstorhaug.github.io/Fonts'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
