@@ -126,7 +126,7 @@ function Install-Font {
             }
 
             if ($null -eq $fontType) {
-                Write-Warning "[$($FontFile.Name)] - Unknown font type. Skipping."
+                # Write-Warning "[$($FontFile.Name)] - Unknown font type. Skipping."
                 continue
             }
 
