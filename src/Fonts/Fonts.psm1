@@ -266,7 +266,6 @@ function Uninstall-Font {
         # AllUsers will uninstall the font so it is removed for all users.
         [Parameter(
             Position = 0,
-            ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
         )]
         [ValidateSet('CurrentUser', 'AllUsers')]
@@ -282,12 +281,13 @@ function Uninstall-Font {
         $parameterAttribute.Mandatory = $true
         $parameterAttribute.Position = 1
         $parameterAttribute.HelpMessage = 'Name of the font to uninstall.'
-        $parameterAttribute.ValueFromPipeline = $true
         $parameterAttribute.ValueFromPipelineByPropertyName = $true
         $attributeCollection.Add($parameterAttribute)
+
         $parameterValidateSet = (Get-Font -Scope $Scope).Name
         $validateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute($parameterValidateSet)
         $attributeCollection.Add($validateSetAttribute)
+
         $runtimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($parameterName, [string], $attributeCollection)
         $runtimeParameterDictionary.Add($parameterName, $runtimeParameter)
         return $runtimeParameterDictionary
