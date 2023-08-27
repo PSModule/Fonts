@@ -1,12 +1,21 @@
-﻿$Path = "$env:USERPROFILE\Downloads\Hack\HackNerdFont-Regular.ttf"
-Install-Font -Path $Path -Verbose
-Install-Font -Path $Path -Verbose -Scope AllUsers -Force
-Install-Font -Path $Path -Verbose -Force
+﻿$FontFolderPath = "C:\Users\marst\Downloads\Ubuntu"
 
-$Path | Install-Font -Verbose
-$Path | Install-Font -Verbose -Force
+$FontFilePath = 'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Regular.otf'
 
-$FontFile = Get-Item -Path $Path
+$FontFilePathList = @(
+    'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Bold.otf',
+    'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Italic.otf',
+    'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Regular.otf'
+)
+
+Install-Font -Path $FontFilePath -Verbose
+Install-Font -Path $FontFilePath -Verbose -Scope CurrentUser -Force
+Install-Font -Path $FontFilePath -Verbose -Force
+
+$FontFilePath | Install-Font -Verbose
+$FontFilePath | Install-Font -Verbose -Force
+
+$FontFile = Get-Item -Path $FontFilePath
 Install-Font -Path $FontFile -Verbose
 Install-Font -Path $FontFile -Verbose -Force
 
@@ -50,4 +59,3 @@ Get-Font
 Get-Font | Uninstall-Font -Verbose
 
 Get-Font -Scope AllUsers
-Get-Font -Scope AllUsers | Uninstall-Font -Verbose

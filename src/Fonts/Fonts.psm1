@@ -193,7 +193,7 @@ function Install-Font {
         Write-Verbose "[$functionName]"
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
-            throw "Administrator rights are required to install fonts in '$($script:fontFolderPath['AllUsers'])'. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
+            throw "Administrator rights are required to install fonts in [$($script:fontFolderPath['AllUsers'])]. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
 
         $maxRetries = 10
@@ -280,10 +280,10 @@ function Install-Font {
                             $retryCount++
                             if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
                                 Write-Error $_
-                                Write-Error "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries]"
+                                Write-Error "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries] - Stopping"
                                 break
                             }
-                            Write-Warning "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries]. Retrying in $retryIntervalSeconds seconds..."
+                            Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
                             Start-Sleep -Seconds $retryIntervalSeconds
                         }
                     } while (-not $fileCopied -and $retryCount -lt $maxRetries)
@@ -382,64 +382,79 @@ function Uninstall-Font {
     }
 
     begin {
+        $functionName = $MyInvocation.MyCommand.Name
+        Write-Verbose "[$functionName]"
+
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
-            throw "Administrator rights are required to uninstall fonts. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
+            throw "Administrator rights are required to uninstall fonts in [$($script:fontFolderPath['AllUsers'])]. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
         $maxRetries = 10
         $retryIntervalSeconds = 1
-        $fontRegistryPath = $Scope -eq 'CurrentUser' ? 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts' : 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
     }
 
     process {
         $Name = $PSBoundParameters['Name']
 
-        foreach ($fontName in $Name) {
-            Write-Verbose "[$fontName] - Uninstalling font - [$Scope]"
-            $font = Get-Font -Name $fontName -Scope $Scope
-            $filePath = $font.path
+        $scopeCount = $Scope.Count
+        Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
+        foreach ($ScopeItem in $Scope) {
+            $scopeName = $scopeItem.ToString()
+            $fontDestinationRegPath = $script:fontRegPath[$scopeName]
 
-            $fileExists = Test-Path -Path $filePath
-            if (-not $fileExists) {
-                Write-Warning "[$fontName] - File [$filePath] does not exist. Skipping."
-            } else {
+            $nameCount = $Name.Count
+            Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
+            foreach ($fontName in $Name) {
+                Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Processing"
+                $font = Get-Font -Name $fontName -Scope $Scope
+                $filePath = $font.path
 
-                Write-Verbose "[$fontName] - Removing file [$filePath]"
-                $retryCount = 0
-                $fileRemoved = $false
-
-                do {
-                    try {
-                        Remove-Item -Path $filePath -Force -ErrorAction Stop
-                        $fileRemoved = $true
-                    } catch {
-                        # Common error; 'file in use'.
-                        $retryCount++
-                        if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
-                            Write-Error $_
-                            Write-Error "[$fontName] - Removing file [$filePath] - Failed. Attempt [$retryCount/$maxRetries]. Stopping."
-                            break
+                $fileExists = Test-Path -Path $filePath
+                if (-not $fileExists) {
+                    Write-Warning "[$fontName] - File [$filePath] does not exist. Skipping."
+                } else {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath]"
+                    $retryCount = 0
+                    $fileRemoved = $false
+                    do {
+                        try {
+                            Remove-Item -Path $filePath -Force -ErrorAction Stop
+                            $fileRemoved = $true
+                        } catch {
+                            # Common error; 'file in use'. Usually VSCode or any web browser.
+                            $retryCount++
+                            if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
+                                Write-Error $_
+                                Write-Error "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath] - Failed [$retryCount/$maxRetries] - Stopping"
+                                break
+                            }
+                            Write-Verbose $_
+                            Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath] - Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
+                            #TODO: Find a way to try to unlock file here.
+                            Start-Sleep -Seconds $retryIntervalSeconds
                         }
-                        Write-Warning "[$fontName] - Removing file [$filePath] - Failed. Attempt [$retryCount/$maxRetries]. Retrying in $retryIntervalSeconds seconds..."
-                        Start-Sleep -Seconds $retryIntervalSeconds
+                    } while (-not $fileRemoved -and $retryCount -lt $maxRetries)
+
+                    if (-not $fileRemoved) {
+                        break  # Break to skip unregistering the font if the file could not be removed.
                     }
-                } while (-not $fileRemoved -and $retryCount -lt $maxRetries)
-
-                if (-not $fileRemoved) {
-                    break  # Break to skip unregistering the font if the file could not be removed.
                 }
-            }
 
-            $fontRegistryPathExists = Get-ItemProperty -Path $fontRegistryPath -Name $fontName -ErrorAction SilentlyContinue
-            if (-not $fontRegistryPathExists) {
-                Write-Warning "[$fontName] - Font is not registered. Skipping."
-            } else {
-                Write-Verbose "[$fontName] - Unregistering font [$fontRegistryPath]"
-                Remove-ItemProperty -Path $fontRegistryPath -Name $fontName -Force -ErrorAction Stop
+                $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
+                if (-not $fontRegistryPathExists) {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
+                } else {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font with path [$fontDestinationRegPath]"
+                    Remove-ItemProperty -Path $fontDestinationRegPath -Name $fontName -Force -ErrorAction Stop
+                }
+                Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
             }
+            Write-Verbose "[$functionName] - [$scopeName] - Done"
         }
     }
 
-    end {}
+    end {
+        Write-Verbose "[$functionName] - Done"
+    }
 }
 
 Export-ModuleMember -Function '*' -Alias '*' -Variable '*' -Cmdlet '*'
