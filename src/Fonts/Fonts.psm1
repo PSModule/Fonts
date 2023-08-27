@@ -405,7 +405,7 @@ function Uninstall-Font {
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
             foreach ($fontName in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Processing"
-                $font = Get-Font -Name $fontName -Scope $Scope
+                $font = Get-Font -Name $fontName -Scope $Scope -Verbose:$false
                 $filePath = $font.path
 
                 $fileExists = Test-Path -Path $filePath
