@@ -1,4 +1,14 @@
-﻿<#
+﻿$script:fontRegPath = @{
+    CurrentUser = 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
+    AllUsers    = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
+}
+
+$script:fontFolderPath = @{
+    CurrentUser = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
+    AllUsers    = "$($env:windir)\Fonts"
+}
+
+<#
 .SYNOPSIS
     Retrieves the installed fonts.
 
@@ -54,24 +64,22 @@ function Get-Font {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
 
-        $regPath = @{
-            CurrentUser = 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
-            AllUsers    = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
-        }
-        $nameCount = $Name.Count
+        $fonts = @()
     }
 
     process {
-        Write-Verbose "[$functionName] - Processing [$($Scope.Count)] scope(s)"
+        $scopeCount = $Scope.Count
+        Write-Verbose "[$functionName] - Processing [$scopeCount] scope(s)"
         foreach ($ScopeItem in $Scope) {
             $scopeName = $ScopeItem.ToString()
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
-            $fontRegistryPath = $regPath[$scopeName]
+            $fontRegistryPath = $script:fontRegPath[$scopeName]
             $registeredFonts = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
             $registeredFontsCount = $($registeredFonts.Count)
             Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$registeredFontsCount] font(s)"
 
+            $nameCount = $Name.Count
             Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
             foreach ($fontFilter in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
@@ -83,11 +91,12 @@ function Get-Font {
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
 
-                    [PSCustomObject]@{
+                    $fonts += [PSCustomObject]@{
                         Name  = $fontName
                         Path  = $fontPath
                         Scope = $fontScope
                     }
+
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Done"
             }
@@ -97,6 +106,7 @@ function Get-Font {
 
     end {
         Write-Verbose "[$functionName] - Done"
+        return $fonts
     }
 }
 
@@ -153,8 +163,8 @@ function Install-Font {
         # File or folder path(s) to the font(s) to install.
         [Parameter(
             Mandatory,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName
         )]
         [Alias('FullName')]
         [string[]] $Path,
@@ -179,102 +189,121 @@ function Install-Font {
     )
 
     begin {
-        if ($Scope -eq 'AllUsers' -and -not (IsAdmin)) {
-            throw "Administrator rights are required to install fonts in '$fontFolderPath'. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
+        $functionName = $MyInvocation.MyCommand.Name
+        Write-Verbose "[$functionName]"
+
+        if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
+            throw "Administrator rights are required to install fonts in '$($script:fontFolderPath['AllUsers'])'. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
 
-        $fontFolderPath = $Scope -eq 'CurrentUser' ? "$env:LOCALAPPDATA\Microsoft\Windows\Fonts" : "$($env:windir)\Fonts"
-        $fontRegistryPath = $Scope -eq 'CurrentUser' ? 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts' : 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
+        $maxRetries = 10
+        $retryIntervalSeconds = 1
     }
 
     process {
-        foreach ($PathItem in $Path) {
-            if (-not (Test-Path -Path $PathItem)) {
-                Write-Error "File [$PathItem] does not exist."
-                return
-            }
+        $scopeCount = $Scope.Count
+        Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
+        foreach ($scopeItem in $Scope) {
+            $scopeName = $scopeItem.ToString()
 
-            $Item = Get-Item -Path $PathItem -ErrorAction Stop
+            $pathCount = $Path.Count
+            Write-Verbose "[$functionName] - [$scopeName] - Processing [$pathCount] path(s)"
+            foreach ($PathItem in $Path) {
+                Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Processing"
 
-            if ($Item.PSIsContainer) {
-                Write-Verbose "[$($Item.FullName)] - Gathering font(s) to install."
-                $FontFiles = Get-ChildItem -Path $Item.FullName -ErrorAction Stop -File -Recurse:$Recurse
-                Write-Verbose "[$($Item.FullName)] - Gathering font(s) to install. - [$($FontFiles.Count)] font(s) found."
-            } else {
-                $FontFiles = $Item
-            }
+                $pathExists = Test-Path -Path $PathItem
+                if (-not $pathExists) {
+                    Write-Error "[$functionName] - [$scopeName] - [$PathItem] - Path not found, skipping."
+                    continue
+                }
+                $item = Get-Item -Path $PathItem -ErrorAction Stop
 
-            $shell = New-Object -ComObject Shell.Application
+                if ($item.PSIsContainer) {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Folder found"
+                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Gathering font(s) to install"
+                    $fontFiles = Get-ChildItem -Path $item.FullName -ErrorAction Stop -File -Recurse:$Recurse
+                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Found [$($FontFiles.Count)] font file(s)"
+                } else {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - File found"
+                    $FontFiles = $Item
+                }
 
-            foreach ($FontFile in $FontFiles) {
-                $fontFileDestinationPath = Join-Path $fontFolderPath $FontFile.Name
-                $fontFileAlreadyInstalled = Test-Path -Path $fontFileDestinationPath
-                if ($fontFileAlreadyInstalled) {
-                    if ($Force) {
-                        Write-Verbose "[$($FontFile.Name)] - Already installed. Forcing install."
-                    } else {
-                        Write-Verbose "[$($FontFile.Name)] - Already installed. Skipping."
+                $shell = New-Object -ComObject Shell.Application
+
+                foreach ($fontFile in $fontFiles) {
+                    $fontFileName = $fontFile.Name
+                    $fontFilePath = $fontFile.FullName
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
+
+                    $fontFileDestinationPath = Join-Path $script:fontFolderPath[$scopeName] $fontFileName
+                    $fontFileAlreadyInstalled = Test-Path -Path $fontFileDestinationPath
+                    if ($fontFileAlreadyInstalled) {
+                        if ($Force) {
+                            Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Already installed. Forcing install."
+                        } else {
+                            Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Already installed. Skipping."
+                            continue
+                        }
+                    }
+
+                    $fontType = switch ($FontFile.Extension) {
+                        '.ttf' { 'TrueType' }                 # TrueType Font
+                        '.otf' { 'OpenType' }                 # OpenType Font
+                        '.ttc' { 'TrueType' }                 # TrueType Font Collection
+                        '.pfb' { 'PostScript Type 1' }        # PostScript Type 1 Font
+                        '.pfm' { 'PostScript Type 1' }        # PostScript Type 1 Outline Font
+                        '.woff' { 'Web Open Font Format' }    # Web Open Font Format
+                        '.woff2' { 'Web Open Font Format 2' } # Web Open Font Format 2
+                    }
+
+                    if ($null -eq $fontType) {
+                        # Write-Warning "[$fontFileName] - Unknown font type. Skipping."
                         continue
                     }
-                }
 
-                $fontType = switch ($FontFile.Extension) {
-                    '.ttf' { 'TrueType' } # TrueType Font
-                    '.otf' { 'OpenType' } # OpenType Font
-                    '.ttc' { 'TrueType' } # TrueType Font Collection
-                    '.pfb' { 'PostScript Type 1' } # PostScript Type 1 Font
-                    '.pfm' { 'PostScript Type 1' } # PostScript Type 1 Outline Font
-                    '.woff' { 'Web Open Font Format' } # Web Open Font Format
-                    '.woff2' { 'Web Open Font Format 2' } # Web Open Font Format 2
-                }
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font"
 
-                if ($null -eq $fontType) {
-                    # Write-Warning "[$($FontFile.Name)] - Unknown font type. Skipping."
-                    continue
-                }
+                    $shellFolder = $shell.Namespace($FontFile.Directory.FullName)
+                    $shellFile = $shellFolder.ParseName($fontFileName)
+                    $fontName = $shellFolder.GetDetailsOf($shellFile, 21)
 
-                Write-Verbose "[$($FontFile.Name)] - Installing font - [$Scope]"
+                    $retryCount = 0
+                    $fileCopied = $false
 
-                $shellFolder = $shell.Namespace($FontFile.Directory.FullName)
-                $shellFile = $shellFolder.ParseName($FontFile.name)
-                $fontName = $shellFolder.GetDetailsOf($shellFile, 21)
-
-                Write-Verbose "[$($FontFile.Name)] - Installing font - [$fontName]"
-
-                $maxRetries = 10
-                $retryIntervalSeconds = 1
-                $retryCount = 0
-                $fileCopied = $false
-
-                do {
-                    try {
-                        $destinationFilePath = Join-Path $fontFolderPath $FontFile.Name
-                        Copy-Item -Path $FontFile.FullName -Destination $destinationFilePath -Force -ErrorAction Stop
-                        $fileCopied = $true
-                    } catch {
-                        $retryCount++
-                        if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
-                            Write-Error $_
-                            Write-Error "[$($FontFile.Name)] - Installing font - [$fontName] - Failed. Attempt [$retryCount/$maxRetries]. Stopping."
-                            break
+                    do {
+                        try {
+                            Copy-Item -Path $FontFile.FullName -Destination $fontFileDestinationPath -Force -ErrorAction Stop
+                            $fileCopied = $true
+                        } catch {
+                            $retryCount++
+                            if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
+                                Write-Error $_
+                                Write-Error "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries]"
+                                break
+                            }
+                            Write-Warning "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries]. Retrying in $retryIntervalSeconds seconds..."
+                            Start-Sleep -Seconds $retryIntervalSeconds
                         }
-                        Write-Warning "[$($FontFile.Name)] - Installing font - [$fontName] - Failed. Attempt [$retryCount/$maxRetries]. Retrying in $retryIntervalSeconds seconds..."
-                        Start-Sleep -Seconds $retryIntervalSeconds
-                    }
-                } while (-not $fileCopied -and $retryCount -lt $maxRetries)
+                    } while (-not $fileCopied -and $retryCount -lt $maxRetries)
 
-                if (-not $fileCopied) {
-                    continue
+                    if (-not $fileCopied) {
+                        continue
+                    }
+                    $registeredFontName = "$fontName ($fontType)"
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
+                    $regValue = $Scope -eq 'AllUsers' ? $fontFileName : $fontFileDestinationPath
+                    New-ItemProperty -Name "$fontName ($fontType)" -Path $script:fontRegPath[$scopeName] -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
-                $registeredFontName = "$fontName ($fontType)"
-                Write-Verbose "[$($FontFile.Name)] - Registering font as [$registeredFontName]"
-                $regValue = $Scope -eq 'AllUsers' ? $FontFile.Name : $destinationFilePath
-                New-ItemProperty -Name "$fontName ($fontType)" -Path $fontRegistryPath -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
+                Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
             }
+            Write-Verbose "[$functionName] - [$scopeName] - Done"
         }
     }
 
-    end {}
+    end {
+        Write-Verbose "[$functionName] - Done"
+    }
 }
 
 <#
@@ -351,7 +380,7 @@ function Uninstall-Font {
     }
 
     begin {
-        if ($Scope -eq 'AllUsers' -and -not (IsAdmin)) {
+        if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             throw "Administrator rights are required to uninstall fonts. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
         }
         $maxRetries = 10
