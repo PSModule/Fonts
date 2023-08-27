@@ -4,8 +4,7 @@ on:
   push:
     paths:
       - scripts/**
-      - src/Fonts/**
-      - .github/workflows/Publish.Fonts.yml
+      - src/Font/**
       - .github/workflows/Publish.Font.yml
   workflow_dispatch:
 
@@ -14,7 +13,7 @@ defaults:
     shell: pwsh
 
 env:
-  ModuleName: 'Fonts'
+  ModuleName: 'Font'
   APIKey: ${{ secrets.apikey }}
 
 jobs:
@@ -30,7 +29,7 @@ jobs:
 
       - name: Run linting
         run: |
-          Invoke-ScriptAnalyzer -Path .\src\Fonts -Recurse -Verbose
+          Invoke-ScriptAnalyzer -Path .\src\Font -Recurse -Verbose
 
   prepare:
     runs-on: 'ubuntu-latest'
@@ -47,4 +46,4 @@ jobs:
       - name: Publish module
         if: github.ref == 'refs/heads/main'
         run: |
-          .\scripts\Publish-Module.ps1 -ModuleName 'Font' -APIKey $env:APIKey -Verbose
+          .\scripts\Publish-Module.ps1 -ModuleName $env:ModuleName -APIKey $env:APIKey -Verbose
