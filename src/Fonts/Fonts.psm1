@@ -205,6 +205,8 @@ function Install-Font {
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
         foreach ($scopeItem in $Scope) {
             $scopeName = $scopeItem.ToString()
+            $fontDestinationFolderPath = $script:fontFolderPath[$scopeName]
+            $fontDestinationRegPath = $script:fontRegPath[$scopeName]
 
             $pathCount = $Path.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$pathCount] path(s)"
@@ -235,7 +237,7 @@ function Install-Font {
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
-                    $fontFileDestinationPath = Join-Path $script:fontFolderPath[$scopeName] $fontFileName
+                    $fontFileDestinationPath = Join-Path $fontDestinationFolderPath $fontFileName
                     $fontFileAlreadyInstalled = Test-Path -Path $fontFileDestinationPath
                     if ($fontFileAlreadyInstalled) {
                         if ($Force) {
@@ -292,7 +294,7 @@ function Install-Font {
                     $registeredFontName = "$fontName ($fontType)"
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
                     $regValue = $Scope -eq 'AllUsers' ? $fontFileName : $fontFileDestinationPath
-                    New-ItemProperty -Name "$fontName ($fontType)" -Path $script:fontRegPath[$scopeName] -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
+                    New-ItemProperty -Name "$fontName ($fontType)" -Path $fontDestinationRegPath -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
