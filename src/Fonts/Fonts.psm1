@@ -5,9 +5,6 @@
 .DESCRIPTION
     Installs a font in the system
 
-.PARAMETER Force
-    Force will overwrite existing fonts
-
 .EXAMPLE
     Install-Font -Path C:\FontFiles\Arial.ttf
 
