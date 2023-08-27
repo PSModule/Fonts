@@ -1,4 +1,4 @@
-﻿$Path = 'C:\Users\AD08640\Downloads\Hack\HackNerdFont-Regular.ttf'
+﻿$Path = "$env:USERPROFILE\Downloads\Hack\HackNerdFont-Regular.ttf"
 Install-Font -Path $Path -Verbose
 Install-Font -Path $Path -Verbose -Scope AllUsers -Force
 Install-Font -Path $Path -Verbose -Force
@@ -13,17 +13,26 @@ Install-Font -Path $FontFile -Verbose -Force
 $FontFile | Install-Font -Verbose
 $FontFile | Install-Font -Verbose -Force
 
-$Files = Get-ChildItem -Path 'C:\Users\AD08640\Downloads\Hack\'
+$Files = Get-ChildItem -Path "$env:USERPROFILE\Downloads\Hack\"
 $Files | Install-Font -Verbose
 $Files | Install-Font -Verbose -Force
 $Files | Install-Font -Verbose -Scope AllUsers
 $Files | Install-Font -Verbose -Scope AllUsers -Force
 
 
-'C:\Users\AD08640\Downloads\CascadiaCode-2111\ttf\' | Install-Font -Verbose
-'C:\Users\AD08640\Downloads\CascadiaCode-2111\ttf\' | Install-Font -Verbose -Force
-'C:\Users\AD08640\Downloads\CascadiaCode-2111\ttf\' | Install-Font -Verbose -Scope AllUsers
-'C:\Users\AD08640\Downloads\CascadiaCode-2111\ttf\' | Install-Font -Verbose -Scope AllUsers -Force
+"$env:USERPROFILE\Downloads\CascadiaCode-2111\ttf\" | Install-Font -Verbose
+"$env:USERPROFILE\Downloads\CascadiaCode-2111\ttf\" | Install-Font -Verbose -Force
+"$env:USERPROFILE\Downloads\CascadiaCode-2111\ttf\" | Install-Font -Verbose -Scope AllUsers
+"$env:USERPROFILE\Downloads\CascadiaCode-2111\ttf\" | Install-Font -Verbose -Scope AllUsers -Force
+
+
+Get-Font -Name 'Casc*' -Verbose
+Get-Font -Name 'Casc*', 'Hack Nerd Font*' -Verbose
+
+Get-Font -Name 'Casc*', 'Ha*' -Scope AllUsers, CurrentUser -Verbose
+
+'Casc*','Ha*' | Get-Font -Scope AllUsers, CurrentUser -Verbose
+
 
 Get-Font -Name 'Casc*'
 Get-Font -Name 'Casc*' | Uninstall-Font -Verbose
