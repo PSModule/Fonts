@@ -64,7 +64,7 @@ function Get-Font {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
 
-        $fonts = @()
+        $fonts = @() #TODO: [Collections.Generic.List[PSCustomObject]]::new()
     }
 
     process {
@@ -91,6 +91,7 @@ function Get-Font {
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
 
+                    #TODO: $fonts.Add() instead of +=
                     $fonts += [PSCustomObject]@{
                         Name  = $fontName
                         Path  = $fontPath
