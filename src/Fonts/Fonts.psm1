@@ -458,4 +458,4 @@ function Uninstall-Font {
     }
 }
 
-Export-ModuleMember -Function '*' -Alias '*' -Variable '*' -Cmdlet '*'
+Export-ModuleMember -Function '*' -Cmdlet '*' -Variable '*' -Alias '*'
