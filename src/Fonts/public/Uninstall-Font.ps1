@@ -1,4 +1,6 @@
-﻿function Uninstall-Font {
+﻿#Requires -Modules Utilities
+
+function Uninstall-Font {
     <#
 .SYNOPSIS
     Uninstalls a font from the system.

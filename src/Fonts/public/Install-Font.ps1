@@ -1,4 +1,6 @@
-﻿function Install-Font {
+﻿#Requires -Modules Utilities
+
+function Install-Font {
     <#
 .SYNOPSIS
     Installs a font in the system
