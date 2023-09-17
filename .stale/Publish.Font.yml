@@ -21,7 +21,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Pester
         run: |
@@ -35,13 +35,13 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
   publish:
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Publish module
         if: github.ref == 'refs/heads/main'
