@@ -183,8 +183,8 @@ function Install-Font {
                     }
                     $registeredFontName = "$fontName ($fontType)"
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
-                    $regValue = $Scope -eq 'AllUsers' ? $fontFileName : $fontFileDestinationPath
-                    New-ItemProperty -Name "$fontName ($fontType)" -Path $fontDestinationRegPath -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
+                    $regValue = 'AllUsers' -eq $Scope ? $fontFileName : $fontFileDestinationPath
+                    New-ItemProperty -Name $registeredFontName -Path $fontDestinationRegPath -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
