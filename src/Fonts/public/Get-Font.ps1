@@ -29,7 +29,7 @@
     .OUTPUTS
         System.Management.Automation.PSCustomObject[]
     #>
-    [OutputType([pscustomobject[]])]
+    [OutputType([PSCustomObject[]])]
     [CmdletBinding()]
     param(
         # Specifies the name of the font to get.
@@ -53,7 +53,7 @@
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
 
-        $fonts = @() #TODO: [Collections.Generic.List[PSCustomObject]]::new()
+        $fonts = [Collections.Generic.List[PSCustomObject]]::new()
     }
 
     process {
@@ -80,13 +80,13 @@
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
 
-                    #TODO: $fonts.Add() instead of +=
-                    $fonts += [PSCustomObject]@{
+                    $font = [PSCustomObject]@{
                         Name  = $fontName
                         Path  = $fontPath
                         Scope = $fontScope
                     }
 
+                    $fonts.Add($font)
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Done"
             }
