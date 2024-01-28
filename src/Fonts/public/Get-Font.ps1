@@ -64,7 +64,8 @@
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
             $fontRegistryPath = $script:fontRegPath[$scopeName]
-            $registeredFonts = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
+            $fontRegistryObject = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties
+            $registeredFonts = $fontRegistryObject | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
             $registeredFontsCount = $($registeredFonts.Count)
             Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$registeredFontsCount] font(s)"
 

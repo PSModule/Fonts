@@ -26,7 +26,8 @@ function Install-Font {
 .EXAMPLE
     Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers -Force
 
-    Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users. This requires administrator rights. If the font already exists, it will be overwritten.
+    Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users.
+    This requires administrator rights. If the font already exists, it will be overwritten.
 
 .EXAMPLE
     Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font
@@ -41,12 +42,14 @@ function Install-Font {
 .EXAMPLE
     Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Force
 
-    Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile. If the font already exists, it will be overwritten.
+    Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
+    If the font already exists, it will be overwritten.
 
 .EXAMPLE
     Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers -Force
 
-    Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users. This requires administrator rights. If the font already exists, it will be overwritten.
+    Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
+    This requires administrator rights. If the font already exists, it will be overwritten.
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -83,7 +86,11 @@ function Install-Font {
         Write-Verbose "[$functionName]"
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
-            throw "Administrator rights are required to install fonts in [$($script:fontFolderPath['AllUsers'])]. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
+            $errorMessage = @"
+Administrator rights are required to install fonts in [$($script:fontFolderPath['AllUsers'])].
+Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
+"@
+            throw $errorMessage
         }
 
         $maxRetries = 10
@@ -170,10 +177,10 @@ function Install-Font {
                             $retryCount++
                             if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
                                 Write-Error $_
-                                Write-Error "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries] - Stopping"
+                                Write-Error "Failed [$retryCount/$maxRetries] - Stopping"
                                 break
                             }
-                            Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font - Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
+                            Write-Verbose "Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
                             Start-Sleep -Seconds $retryIntervalSeconds
                         }
                     } while (-not $fileCopied -and $retryCount -lt $maxRetries)
@@ -184,7 +191,15 @@ function Install-Font {
                     $registeredFontName = "$fontName ($fontType)"
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
                     $regValue = 'AllUsers' -eq $Scope ? $fontFileName : $fontFileDestinationPath
-                    New-ItemProperty -Name $registeredFontName -Path $fontDestinationRegPath -PropertyType string -Value $regValue -Force -ErrorAction stop | Out-Null
+                    $params = @{
+                        Name         = $registeredFontName
+                        Path         = $fontDestinationRegPath
+                        PropertyType = 'string'
+                        Value        = $regValue
+                        Force        = $true
+                        ErrorAction  = 'Stop'
+                    }
+                    New-ItemProperty @params | Out-Null
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"

@@ -78,7 +78,11 @@ function Uninstall-Font {
         Write-Verbose "[$functionName]"
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
-            throw "Administrator rights are required to uninstall fonts in [$($script:fontFolderPath['AllUsers'])]. Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command."
+            $errorMessage = @"
+Administrator rights are required to uninstall fonts in [$($script:fontFolderPath['AllUsers'])].
+Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
+"@
+            throw $errorMessage
         }
         $maxRetries = 10
         $retryIntervalSeconds = 1
@@ -116,11 +120,11 @@ function Uninstall-Font {
                             $retryCount++
                             if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
                                 Write-Error $_
-                                Write-Error "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath] - Failed [$retryCount/$maxRetries] - Stopping"
+                                Write-Error "Failed [$retryCount/$maxRetries] - Stopping"
                                 break
                             }
                             Write-Verbose $_
-                            Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath] - Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
+                            Write-Verbose "Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
                             #TODO: Find a way to try to unlock file here.
                             Start-Sleep -Seconds $retryIntervalSeconds
                         }
