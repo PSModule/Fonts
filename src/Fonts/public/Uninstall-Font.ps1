@@ -2,25 +2,25 @@
 
 function Uninstall-Font {
     <#
-.SYNOPSIS
-    Uninstalls a font from the system.
+        .SYNOPSIS
+            Uninstalls a font from the system.
 
-.DESCRIPTION
-    Uninstalls a font from the system.
+        .DESCRIPTION
+            Uninstalls a font from the system.
 
-.EXAMPLE
-    Uninstall-Font -Name 'Courier New'
+        .EXAMPLE
+            Uninstall-Font -Name 'Courier New'
 
-    Uninstalls the 'Courier New' font from the system for the current user.
+            Uninstalls the 'Courier New' font from the system for the current user.
 
-.EXAMPLE
-    Uninstall-Font -Name 'Courier New' -Scope AllUsers
+        .EXAMPLE
+            Uninstall-Font -Name 'Courier New' -Scope AllUsers
 
-    Uninstalls the Courier New font from the system for all users.
+            Uninstalls the Courier New font from the system for all users.
 
-.OUTPUTS
-    None
-#>
+        .OUTPUTS
+            None
+    #>
     [CmdletBinding()]
     param (
         # Scope of the font to uninstall.

@@ -2,55 +2,56 @@
 
 function Install-Font {
     <#
-.SYNOPSIS
-    Installs a font in the system
+        .SYNOPSIS
+            Installs a font in the system
 
-.DESCRIPTION
-    Installs a font in the system
+        .DESCRIPTION
+            Installs a font in the system
 
-.EXAMPLE
-    Install-Font -Path C:\FontFiles\Arial.ttf
+        .EXAMPLE
+            Install-Font -Path C:\FontFiles\Arial.ttf
 
-    Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile.
+            Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile.
 
-.EXAMPLE
-    Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers
+        .EXAMPLE
+            Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers
 
-    Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users. This requires administrator rights.
+            Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users. This requires administrator rights.
 
-.EXAMPLE
-    Install-Font -Path C:\FontFiles\Arial.ttf -Force
+        .EXAMPLE
+            Install-Font -Path C:\FontFiles\Arial.ttf -Force
 
-    Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile. If the font already exists, it will be overwritten.
+            Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile. If the font already exists, it will be overwritten.
 
-.EXAMPLE
-    Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers -Force
+        .EXAMPLE
+            Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers -Force
 
-    Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users.
-    This requires administrator rights. If the font already exists, it will be overwritten.
+            Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users.
+            This requires administrator rights. If the font already exists, it will be overwritten.
 
-.EXAMPLE
-    Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font
+        .EXAMPLE
+            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font
 
-    Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
+            Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
 
-.EXAMPLE
-    Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers
+        .EXAMPLE
+            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers
 
-    Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users. This requires administrator rights.
+            Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
+            This requires administrator rights.
 
-.EXAMPLE
-    Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Force
+        .EXAMPLE
+            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Force
 
-    Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
-    If the font already exists, it will be overwritten.
+            Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
+            If the font already exists, it will be overwritten.
 
-.EXAMPLE
-    Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers -Force
+        .EXAMPLE
+            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers -Force
 
-    Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
-    This requires administrator rights. If the font already exists, it will be overwritten.
-#>
+            Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
+            This requires administrator rights. If the font already exists, it will be overwritten.
+    #>
     [CmdletBinding(SupportsShouldProcess)]
     param (
         # File or folder path(s) to the font(s) to install.
