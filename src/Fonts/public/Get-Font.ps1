@@ -1,35 +1,35 @@
 ﻿function Get-Font {
     <#
-    .SYNOPSIS
-        Retrieves the installed fonts.
+        .SYNOPSIS
+            Retrieves the installed fonts.
 
-    .DESCRIPTION
-        Retrieves the installed fonts.
+        .DESCRIPTION
+            Retrieves the installed fonts.
 
-    .EXAMPLE
-        Get-Font
+        .EXAMPLE
+            Get-Font
 
-        Gets all the fonts installed for the current user.
+            Gets all the fonts installed for the current user.
 
-    .EXAMPLE
-        Get-Font -Name 'Arial*'
+        .EXAMPLE
+            Get-Font -Name 'Arial*'
 
-        Gets all the fonts installed for the current user that start with 'Arial'.
+            Gets all the fonts installed for the current user that start with 'Arial'.
 
-    .EXAMPLE
-        Get-Font -Scope 'AllUsers'
+        .EXAMPLE
+            Get-Font -Scope 'AllUsers'
 
-        Gets all the fonts installed for all users.
+            Gets all the fonts installed for all users.
 
-    .EXAMPLE
-        Get-Font -Name 'Calibri' -Scope 'AllUsers'
+        .EXAMPLE
+            Get-Font -Name 'Calibri' -Scope 'AllUsers'
 
-        Gets the font with the name 'Calibri' for all users.
+            Gets the font with the name 'Calibri' for all users.
 
-    .OUTPUTS
-        System.Management.Automation.PSCustomObject[]
+        .OUTPUTS
+            [System.Collections.Generic.List[PSCustomObject]]
     #>
-    [OutputType([PSCustomObject[]])]
+    [OutputType([System.Collections.Generic.List[PSCustomObject]])]
     [CmdletBinding()]
     param(
         # Specifies the name of the font to get.
@@ -53,7 +53,7 @@
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
 
-        $fonts = [Collections.Generic.List[PSCustomObject]]::new()
+        $fonts = [System.Collections.Generic.List[PSCustomObject]]::new()
     }
 
     process {
