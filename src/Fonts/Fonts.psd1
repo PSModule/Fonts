@@ -1,5 +1,5 @@
 ﻿@{
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.0.1'
     Description   = 'Manage fonts on a Windows system'
     HelpInfoURI   = 'https://PSModule.github.io/Fonts'
     PrivateData   = @{
