@@ -16,12 +16,14 @@ function Install-Font {
         .EXAMPLE
             Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers
 
-            Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users. This requires administrator rights.
+            Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users.
+            This requires administrator rights.
 
         .EXAMPLE
             Install-Font -Path C:\FontFiles\Arial.ttf -Force
 
-            Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile. If the font already exists, it will be overwritten.
+            Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile.
+            If the font already exists, it will be overwritten.
 
         .EXAMPLE
             Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers -Force
