@@ -83,10 +83,3 @@ Please see the issues tab on this project and submit a new issue that matches yo
 
 If you do code, we'd love to have your contributions. Please read the [Contribution guidelines](CONTRIBUTING.md) for more information.
 You can either help by picking up an existing issue or submit a new one if you have an idea for a new feature or improvement.
-
----
-
-- [Code of Conduct](CODE_OF_CONDUCT.md)
-- [Security Policy](SECURITY.md)
-- [Support](SUPPORT.md)
-- [License](LICENSE)
