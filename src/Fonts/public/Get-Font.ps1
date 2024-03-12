@@ -29,6 +29,7 @@
         .OUTPUTS
             [System.Collections.Generic.List[PSCustomObject]]
     #>
+    [Alias('Get-Fonts')]
     [OutputType([System.Collections.Generic.List[PSCustomObject]])]
     [CmdletBinding()]
     param(

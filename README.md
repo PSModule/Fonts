@@ -1,6 +1,7 @@
 # Fonts
 
-This is a PowerShell module for managing fonts. It allows you to install, uninstall and list fonts on the system and user contexts.
+This is a PowerShell module for managing fonts.
+It helps you to install, uninstall and list fonts on the system.
 
 ## Prerequisites
 
@@ -28,7 +29,7 @@ Get-Font
 ```
 
 This command will list all fonts installed in the system context.
-For Windows this means that it will list all fonts installed on the C:\Windows\Fonts folder.
+For Windows this means that it will list all fonts installed on the `C:\Windows\Fonts` folder.
 
 ```powershell
 Get-Font -Scope AllUsers
@@ -37,7 +38,7 @@ Get-Font -Scope AllUsers
 ### Install a font
 
 To install a font in the user context, you can use the following command.
-This will install the font in the users font folder "$env:LOCALAPPDATA\Microsoft\Windows\Fonts" and update the registry to
+This will install the font in the users font folder `$env:LOCALAPPDATA\Microsoft\Windows\Fonts` and update the registry to
 make it available to the current user.
 
 ```powershell
@@ -54,7 +55,7 @@ Install-Font -Path 'C:\path\to\font.ttf' -Scope AllUsers
 ### Uninstall a font
 
 To uninstall a font from the user context, you can use the following command.
-This will remove the font from the users font folder "$env:LOCALAPPDATA\Microsoft\Windows\Fonts" and update the
+This will remove the font from the users font folder `$env:LOCALAPPDATA\Microsoft\Windows\Fonts` and update the
 registry to remove it from the current user.
 
 ```powershell

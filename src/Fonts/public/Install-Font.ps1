@@ -54,6 +54,7 @@ function Install-Font {
             Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
             This requires administrator rights. If the font already exists, it will be overwritten.
     #>
+    [Alias('Install-Fonts')]
     [CmdletBinding(SupportsShouldProcess)]
     param (
         # File or folder path(s) to the font(s) to install.

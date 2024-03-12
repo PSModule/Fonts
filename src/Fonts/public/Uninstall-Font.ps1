@@ -21,6 +21,7 @@ function Uninstall-Font {
         .OUTPUTS
             None
     #>
+    [Alias('Uninstall-Fonts')]
     [CmdletBinding()]
     param (
         # Scope of the font to uninstall.
