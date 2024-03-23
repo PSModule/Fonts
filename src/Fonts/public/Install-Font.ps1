@@ -114,7 +114,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
             foreach ($PathItem in $Path) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Processing"
 
-                $pathExists = Test-Path -Path $PathItem
+                $pathExists = Test-Path -Path $PathItem -ErrorAction SilentlyContinue
                 if (-not $pathExists) {
                     Write-Error "[$functionName] - [$scopeName] - [$PathItem] - Path not found, skipping."
                     continue
