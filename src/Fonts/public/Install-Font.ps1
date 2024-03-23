@@ -114,7 +114,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
             foreach ($PathItem in $Path) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Processing"
 
-                $pathExists = Test-Path -Path $PathItem
+                $pathExists = Test-Path -Path $PathItem -ErrorAction SilentlyContinue
                 if (-not $pathExists) {
                     Write-Error "[$functionName] - [$scopeName] - [$PathItem] - Path not found, skipping."
                     continue
@@ -131,10 +131,9 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     $FontFiles = $Item
                 }
 
-                $shell = New-Object -ComObject Shell.Application
-
                 foreach ($fontFile in $fontFiles) {
                     $fontFileName = $fontFile.Name
+                    $fontName = $fontFile.BaseName
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
@@ -149,7 +148,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         }
                     }
 
-                    $fontType = switch ($FontFile.Extension) {
+                    $fontType = switch ($fontFile.Extension) {
                         '.ttf' { 'TrueType' }                 # TrueType Font
                         '.otf' { 'OpenType' }                 # OpenType Font
                         '.ttc' { 'TrueType' }                 # TrueType Font Collection
@@ -166,16 +165,12 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font"
 
-                    $shellFolder = $shell.Namespace($FontFile.Directory.FullName)
-                    $shellFile = $shellFolder.ParseName($fontFileName)
-                    $fontName = $shellFolder.GetDetailsOf($shellFile, 21)
-
                     $retryCount = 0
                     $fileCopied = $false
 
                     do {
                         try {
-                            Copy-Item -Path $FontFile.FullName -Destination $fontFileDestinationPath -Force -ErrorAction Stop
+                            $null = $fontFile.CopyTo($fontFileDestinationPath)
                             $fileCopied = $true
                         } catch {
                             $retryCount++
@@ -203,7 +198,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         Force        = $true
                         ErrorAction  = 'Stop'
                     }
-                    New-ItemProperty @params | Out-Null
+                    $null = New-ItemProperty @params
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"

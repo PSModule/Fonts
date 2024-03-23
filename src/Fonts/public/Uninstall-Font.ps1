@@ -105,7 +105,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                 $font = Get-Font -Name $fontName -Scope $Scope -Verbose:$false
                 $filePath = $font.path
 
-                $fileExists = Test-Path -Path $filePath
+                $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
                 if (-not $fileExists) {
                     Write-Warning "[$fontName] - File [$filePath] does not exist. Skipping."
                 } else {
