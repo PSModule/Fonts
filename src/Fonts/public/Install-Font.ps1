@@ -170,7 +170,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                     do {
                         try {
-                            $null = $fontFile.CopyTo($fontFileDestinationPath, $true)
+                            $null = $fontFile.CopyTo($fontFileDestinationPath)
                             $fileCopied = $true
                         } catch {
                             $retryCount++
