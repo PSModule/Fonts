@@ -131,10 +131,9 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     $FontFiles = $Item
                 }
 
-                $shell = New-Object -ComObject Shell.Application
-
                 foreach ($fontFile in $fontFiles) {
                     $fontFileName = $fontFile.Name
+                    $fontName = $fontFile.BaseName
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
@@ -149,7 +148,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         }
                     }
 
-                    $fontType = switch ($FontFile.Extension) {
+                    $fontType = switch ($fontFile.Extension) {
                         '.ttf' { 'TrueType' }                 # TrueType Font
                         '.otf' { 'OpenType' }                 # OpenType Font
                         '.ttc' { 'TrueType' }                 # TrueType Font Collection
@@ -165,10 +164,6 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     }
 
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font"
-
-                    $shellFolder = $shell.Namespace($FontFile.Directory.FullName)
-                    $shellFile = $shellFolder.ParseName($fontFileName)
-                    $fontName = $shellFolder.GetDetailsOf($shellFile, 21)
 
                     $retryCount = 0
                     $fileCopied = $false
