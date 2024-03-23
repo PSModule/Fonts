@@ -170,7 +170,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                     do {
                         try {
-                            $fontFile.CopyTo($fontFileDestinationPath, $true)
+                            $null = $fontFile.CopyTo($fontFileDestinationPath, $true)
                             $fileCopied = $true
                         } catch {
                             $retryCount++
@@ -198,7 +198,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         Force        = $true
                         ErrorAction  = 'Stop'
                     }
-                    New-ItemProperty @params | Out-Null
+                    $null = New-ItemProperty @params
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
