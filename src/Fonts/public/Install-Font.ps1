@@ -170,7 +170,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                     do {
                         try {
-                            Copy-Item -Path $FontFile.FullName -Destination $fontFileDestinationPath -Force -ErrorAction Stop
+                            $fontFile.CopyTo($fontFileDestinationPath, $true)
                             $fileCopied = $true
                         } catch {
                             $retryCount++
