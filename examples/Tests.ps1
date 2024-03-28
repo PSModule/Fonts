@@ -1,12 +1,12 @@
-﻿$FontFolderPath = "C:\Users\marst\Downloads\Ubuntu"
+﻿# $FontFolderPath = "C:\Users\marst\Downloads\Ubuntu"
 
 $FontFilePath = 'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Regular.otf'
 
-$FontFilePathList = @(
-    'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Bold.otf',
-    'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Italic.otf',
-    'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Regular.otf'
-)
+# $FontFilePathList = @(
+#     'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Bold.otf',
+#     'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Italic.otf',
+#     'C:\Users\marst\Downloads\CodeNewRoman\CodeNewRomanNerdFontPropo-Regular.otf'
+# )
 
 Install-Font -Path $FontFilePath -Verbose
 Install-Font -Path $FontFilePath -Verbose -Scope CurrentUser -Force
