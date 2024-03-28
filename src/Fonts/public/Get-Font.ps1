@@ -78,7 +78,11 @@
 
                 foreach ($fontItem in $filteredFonts) {
                     $fontName = $fontItem.Name
-                    $fontPath = $Scope -eq 'AllUsers' ? (Join-Path "$($env:windir)\Fonts" $fontItem.Value) : $fontItem.Value
+                    $fontPath = if ($Scope -eq 'AllUsers') {
+                        Join-Path -Path $env:windir -ChildPath "Fonts/$($fontItem.Value)"
+                    } else {
+                        $fontItem.Value
+                    }
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
 

@@ -1,4 +1,4 @@
-﻿#Requires -Modules Utilities
+﻿#Requires -Modules Admin
 
 function Install-Font {
     <#
@@ -137,7 +137,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
-                    $fontFileDestinationPath = Join-Path $fontDestinationFolderPath $fontFileName
+                    $fontFileDestinationPath = Join-Path -Path $fontDestinationFolderPath -ChildPath $fontFileName
                     $fontFileAlreadyInstalled = Test-Path -Path $fontFileDestinationPath
                     if ($fontFileAlreadyInstalled) {
                         if ($Force) {
@@ -189,7 +189,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     }
                     $registeredFontName = "$fontName ($fontType)"
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
-                    $regValue = 'AllUsers' -eq $Scope ? $fontFileName : $fontFileDestinationPath
+                    $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontFileDestinationPath }
                     $params = @{
                         Name         = $registeredFontName
                         Path         = $fontDestinationRegPath

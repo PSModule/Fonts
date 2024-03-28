@@ -1,4 +1,4 @@
-﻿#Requires -Modules Utilities
+﻿#Requires -Modules Admin
 
 function Uninstall-Font {
     <#
