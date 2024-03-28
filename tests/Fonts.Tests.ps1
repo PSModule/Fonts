@@ -21,27 +21,27 @@ Describe 'Fonts' {
     Context 'Install-Font' {
         It 'Install a font for current user' {
             $fontFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'fonts/CascadiaCodePL.ttf'
-            Install-Font -Path $fontFilePath | Should -Not -Throw
+            { Install-Font -Path $fontFilePath } | Should -Not -Throw
         }
 
         It 'Install a font for all users' {
             $fontFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'fonts/CascadiaCodePL.ttf'
-            Install-Font -Path $fontFilePath -Scope 'AllUsers' | Should -Not -Throw
+            { Install-Font -Path $fontFilePath -Scope 'AllUsers' } | Should -Not -Throw
         }
 
         It 'Install fonts in a folder for current user' {
             $fontsFolderPath = Join-Path -Path $PSScriptRoot -ChildPath 'fonts'
-            Install-Font -Path $fontsFolderPath -Recurse | Should -Not -Throw
+            { Install-Font -Path $fontsFolderPath -Recurse } | Should -Not -Throw
         }
 
         It 'Install fonts in a folder for all users' {
             $fontsFolderPath = Join-Path -Path $PSScriptRoot -ChildPath 'fonts'
-            Install-Font -Path $fontsFolderPath -Recurse -Scope 'AllUsers' | Should -Not -Throw
+            { Install-Font -Path $fontsFolderPath -Recurse -Scope 'AllUsers' } | Should -Not -Throw
         }
 
         It 'Install fonts in a folder for all users (forcefully)' {
             $fontsFolderPath = Join-Path -Path $PSScriptRoot -ChildPath 'fonts'
-            Install-Font -Path $fontsFolderPath -Recurse -Scope 'AllUsers' -Force | Should -Not -Throw
+            { Install-Font -Path $fontsFolderPath -Recurse -Scope 'AllUsers' -Force } | Should -Not -Throw
         }
     }
 }
