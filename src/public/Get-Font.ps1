@@ -55,6 +55,16 @@
         Write-Verbose "[$functionName]"
 
         $fonts = [System.Collections.Generic.List[PSCustomObject]]::new()
+
+        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+            'Windows'
+        } elseif ($IsLinux) {
+            'Linux'
+        } elseif ($IsMacOS) {
+            'MacOS'
+        } else {
+            throw 'Unsupported OS'
+        }
     }
 
     process {
@@ -64,9 +74,14 @@
             $scopeName = $ScopeItem.ToString()
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
-            $fontRegistryPath = $script:fontRegPath[$scopeName]
-            $fontRegistryObject = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties
-            $registeredFonts = $fontRegistryObject | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
+            $fontFolderPath = $script:fontFolderPath[$os][$scopeName]
+            if ($os -eq 'Windows') {
+                $fontRegistryPath = $script:fontRegPath[$scopeName]
+                $fontRegistryObject = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties
+                $registeredFonts = $fontRegistryObject | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
+            } else {
+                $registeredFonts = Get-ChildItem -Path $fontFolderPath -File
+            }
             $registeredFontsCount = $($registeredFonts.Count)
             Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$registeredFontsCount] font(s)"
 
@@ -78,10 +93,10 @@
 
                 foreach ($fontItem in $filteredFonts) {
                     $fontName = $fontItem.Name
-                    $fontPath = if ($Scope -eq 'AllUsers') {
-                        Join-Path -Path $env:windir -ChildPath "Fonts/$($fontItem.Value)"
+                    if ($os -eq 'Windows') {
+                        $fontPath = Join-Path -Path $fontFolderPath -ChildPath $fontItem.Value
                     } else {
-                        $fontItem.Value
+                        $fontPath = $fontItem.FullName
                     }
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
