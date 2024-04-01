@@ -4,7 +4,7 @@
 }
 
 # $script:fontFolderPathMap = @{
-$fontFolderPathMap = @{
+$script:fontFolderPathMap = @{
     'Windows' = @{
         CurrentUser = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
         AllUsers    = "$($env:windir)\Fonts"

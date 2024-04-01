@@ -74,7 +74,7 @@
             $scopeName = $ScopeItem.ToString()
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
-            $fontFolderPath = $script:fontFolderPath[$os][$scopeName]
+            $fontFolderPath = $script:fontFolderPathMap[$os][$scopeName]
             if ($os -eq 'Windows') {
                 $fontRegistryPath = $script:fontRegPath[$scopeName]
                 $fontRegistryObject = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties
