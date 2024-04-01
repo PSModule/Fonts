@@ -47,7 +47,7 @@
             ValueFromPipelineByPropertyName
         )]
         [Alias('ConfigScope')]
-        [System.Management.Automation.Configuration.ConfigScope[]] $Scope = 'CurrentUser'
+        [Scope[]] $Scope = 'CurrentUser'
     )
 
     begin {
@@ -74,6 +74,9 @@
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
             $fontFolderPath = $script:fontFolderPathMap[$os][$scopeName]
             Write-Verbose "[$functionName] - [$scopeName] - Font folder path: [$fontFolderPath]"
+            if (-not (Test-Path -Path $fontFolderPath)) {
+                throw "[$functionName] - [$scopeName] - Font folder path does not exist: [$fontFolderPath]"
+            }
         }
     }
     #         if ($os -eq 'Windows') {
