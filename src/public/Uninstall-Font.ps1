@@ -1,4 +1,4 @@
-﻿#Requires -Modules Admin
+﻿#Requires -Modules Admin, DynamicParams
 
 function Uninstall-Font {
     <#
@@ -36,26 +36,7 @@ function Uninstall-Font {
     )
 
     DynamicParam {
-
-
-        $validateSetAttribute.ErrorMessage = "The font name provided was not found in the selected scope [$Scope]."
-        $attributeCollection.Add($validateSetAttribute)
-
-        return $runtimeDefinedParameterDictionary
-
-        $ParamDictionary = New-ParamDictionary
-
-        $parameterValidateSet = switch ($Scope) {
-            'AllUsers' {
-                (Get-Font -Scope 'AllUsers').Name
-            }
-            'CurrentUser' {
-                (Get-Font -Scope 'CurrentUser').Name
-            }
-            default {
-                (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
-            }
-        }
+        $paramDictionary = New-DynamicParamDictionary
 
         $dynName = @{
             Name                            = 'Name'
@@ -66,13 +47,23 @@ function Uninstall-Font {
             HelpMessage                     = 'Name of the font to uninstall.'
             ValueFromPipeline               = $true
             ValueFromPipelineByPropertyName = $true
-
-            ValidateSet                     = Get-Process | Select-Object -ExpandProperty Name
-            ParamDictionary                 = $ParamDictionary
+            ValidationErrorMessage          = "The font name provided was not found in the selected scope [$Scope]."
+            ValidateSet                     = switch ($Scope) {
+                'AllUsers' {
+                    (Get-Font -Scope 'AllUsers').Name
+                }
+                'CurrentUser' {
+                    (Get-Font -Scope 'CurrentUser').Name
+                }
+                default {
+                    (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
+                }
+            }
+            DynamicParamDictionary          = $paramDictionary
         }
         New-DynamicParam @dynName
 
-        return $ParamDictionary
+        return $paramDictionary
     }
 
     begin {
