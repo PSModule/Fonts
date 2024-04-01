@@ -36,23 +36,14 @@ function Uninstall-Font {
     )
 
     DynamicParam {
-        $runtimeDefinedParameterDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        $attributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
 
-        $parameterName = 'Name'
-        $parameterAliases = @('FontName', 'Font')
-        $parameterAttribute = New-Object System.Management.Automation.ParameterAttribute
-        $parameterAttribute.Mandatory = $true
-        $parameterAttribute.Position = 1
-        $parameterAttribute.HelpMessage = 'Name of the font to uninstall.'
-        $parameterAttribute.ValueFromPipeline = $true
-        $parameterAttribute.ValueFromPipelineByPropertyName = $true
-        $attributeCollection.Add($parameterAttribute)
 
-        foreach ($parameterAlias in $parameterAliases) {
-            $parameterAttribute = New-Object System.Management.Automation.AliasAttribute($parameterAlias)
-            $attributeCollection.Add($parameterAttribute)
-        }
+        $validateSetAttribute.ErrorMessage = "The font name provided was not found in the selected scope [$Scope]."
+        $attributeCollection.Add($validateSetAttribute)
+
+        return $runtimeDefinedParameterDictionary
+
+        $ParamDictionary = New-ParamDictionary
 
         $parameterValidateSet = switch ($Scope) {
             'AllUsers' {
@@ -65,13 +56,23 @@ function Uninstall-Font {
                 (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
             }
         }
-        $validateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute($parameterValidateSet)
-        $validateSetAttribute.ErrorMessage = "The font name provided was not found in the selected scope [$Scope]."
-        $attributeCollection.Add($validateSetAttribute)
 
-        $runtimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($parameterName, [string[]], $attributeCollection)
-        $runtimeDefinedParameterDictionary.Add($parameterName, $runtimeParameter)
-        return $runtimeDefinedParameterDictionary
+        $dynName = @{
+            Name                            = 'Name'
+            Type                            = [string[]]
+            Alias                           = @('FontName', 'Font')
+            Mandatory                       = $true
+            Position                        = 1
+            HelpMessage                     = 'Name of the font to uninstall.'
+            ValueFromPipeline               = $true
+            ValueFromPipelineByPropertyName = $true
+
+            ValidateSet                     = Get-Process | Select-Object -ExpandProperty Name
+            ParamDictionary                 = $ParamDictionary
+        }
+        New-DynamicParam @dynName
+
+        return $ParamDictionary
     }
 
     begin {
