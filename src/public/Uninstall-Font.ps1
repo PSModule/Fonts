@@ -1,4 +1,4 @@
-﻿#Requires -Modules Admin
+﻿#Requires -Modules Admin, DynamicParams
 
 function Uninstall-Font {
     <#
@@ -36,42 +36,34 @@ function Uninstall-Font {
     )
 
     DynamicParam {
-        $runtimeDefinedParameterDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        $attributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+        $paramDictionary = New-DynamicParamDictionary
 
-        $parameterName = 'Name'
-        $parameterAliases = @('FontName', 'Font')
-        $parameterAttribute = New-Object System.Management.Automation.ParameterAttribute
-        $parameterAttribute.Mandatory = $true
-        $parameterAttribute.Position = 1
-        $parameterAttribute.HelpMessage = 'Name of the font to uninstall.'
-        $parameterAttribute.ValueFromPipeline = $true
-        $parameterAttribute.ValueFromPipelineByPropertyName = $true
-        $attributeCollection.Add($parameterAttribute)
-
-        foreach ($parameterAlias in $parameterAliases) {
-            $parameterAttribute = New-Object System.Management.Automation.AliasAttribute($parameterAlias)
-            $attributeCollection.Add($parameterAttribute)
+        $dynName = @{
+            Name                            = 'Name'
+            Type                            = [string[]]
+            Alias                           = @('FontName', 'Font')
+            Mandatory                       = $true
+            Position                        = 1
+            HelpMessage                     = 'Name of the font to uninstall.'
+            ValueFromPipeline               = $true
+            ValueFromPipelineByPropertyName = $true
+            ValidationErrorMessage          = "The font name provided was not found in the selected scope [$Scope]."
+            ValidateSet                     = switch ($Scope) {
+                'AllUsers' {
+                    (Get-Font -Scope 'AllUsers').Name
+                }
+                'CurrentUser' {
+                    (Get-Font -Scope 'CurrentUser').Name
+                }
+                default {
+                    (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
+                }
+            }
+            DynamicParamDictionary          = $paramDictionary
         }
+        New-DynamicParam @dynName
 
-        $parameterValidateSet = switch ($Scope) {
-            'AllUsers' {
-                (Get-Font -Scope 'AllUsers').Name
-            }
-            'CurrentUser' {
-                (Get-Font -Scope 'CurrentUser').Name
-            }
-            default {
-                (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
-            }
-        }
-        $validateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute($parameterValidateSet)
-        $validateSetAttribute.ErrorMessage = "The font name provided was not found in the selected scope [$Scope]."
-        $attributeCollection.Add($validateSetAttribute)
-
-        $runtimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($parameterName, [string[]], $attributeCollection)
-        $runtimeDefinedParameterDictionary.Add($parameterName, $runtimeParameter)
-        return $runtimeDefinedParameterDictionary
+        return $paramDictionary
     }
 
     begin {
