@@ -82,38 +82,31 @@
             $installedFonts = Get-ChildItem -Path $fontFolderPath -File
             $installedFontsCount = $($installedFonts.Count)
             Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$installedFontsCount] font(s)"
+            $nameCount = $Name.Count
+            Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
+            foreach ($fontFilter in $Name) {
+                Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
+                $filteredFonts = $installedFonts | Where-Object { $_.Name -like $fontFilter }
+
+                foreach ($fontItem in $filteredFonts) {
+                    $fontName = $fontItem.Name
+                    $fontPath = $fontItem.FullName
+                    $fontScope = $scopeName
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
+
+                    $font = [PSCustomObject]@{
+                        Name  = $fontName
+                        Path  = $fontPath
+                        Scope = $fontScope
+                    }
+
+                    $fonts.Add($font)
+                }
+                Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Done"
+            }
+            Write-Verbose "[$functionName] - [$scopeName] - Done"
         }
     }
-
-    #         $nameCount = $Name.Count
-    #         Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
-    #         foreach ($fontFilter in $Name) {
-    #             Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
-    #             $filteredFonts = $registeredFonts | Where-Object { $_.Name -like $fontFilter }
-
-    #             foreach ($fontItem in $filteredFonts) {
-    #                 $fontName = $fontItem.Name
-    #                 if ($os -eq 'Windows') {
-    #                     $fontPath = Join-Path -Path $fontFolderPath -ChildPath $fontItem.Value
-    #                 } else {
-    #                     $fontPath = $fontItem.FullName
-    #                 }
-    #                 $fontScope = $scopeName
-    #                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
-
-    #                 $font = [PSCustomObject]@{
-    #                     Name  = $fontName
-    #                     Path  = $fontPath
-    #                     Scope = $fontScope
-    #                 }
-
-    #                 $fonts.Add($font)
-    #             }
-    #             Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Done"
-    #         }
-    #         Write-Verbose "[$functionName] - [$scopeName] - Done"
-    #     }
-    # }
 
     end {
         Write-Verbose "[$functionName] - Done"

@@ -216,7 +216,9 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     }
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
-                Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
+                if ($item.PSIsContainer) {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
+                }
             }
             Write-Verbose "[$functionName] - [$scopeName] - Done"
         }
