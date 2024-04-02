@@ -64,11 +64,10 @@ Describe 'Fonts' {
         It 'Should uninstall a font' {
             { Uninstall-Font -Name 'CascadiaCodePL' -Verbose } | Should -Not -Throw
         }
-        It 'Should return the installed fonts' {
-            {
-                $fonts = Get-Font
-                Write-Verbose ($fonts | Out-String) -Verbose
-            } | Should -Not -Throw
+        It 'Should NOT return the uninstalled font' {
+            $font = Get-Font -Name 'CascadiaCodePL'
+            Write-Verbose ($font | Out-String) -Verbose
+            $font | Should -BeNullOrEmpty
         }
     }
 }
