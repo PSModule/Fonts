@@ -74,20 +74,16 @@
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
             $fontFolderPath = $script:fontFolderPathMap[$os][$scopeName]
             Write-Verbose "[$functionName] - [$scopeName] - Font folder path: [$fontFolderPath]"
-            if (-not (Test-Path -Path $fontFolderPath)) {
+            $folderExists = Test-Path -Path $fontFolderPath
+            Write-Verbose "[$functionName] - [$scopeName] - Folder exists: [$folderExists]"
+            if (-not $folderExists) {
                 return $fonts
             }
+            $installedFonts = Get-ChildItem -Path $fontFolderPath -File
+            $installedFontsCount = $($installedFonts.Count)
+            Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$installedFontsCount] font(s)"
         }
     }
-    #         if ($os -eq 'Windows') {
-    #             $fontRegistryPath = $script:fontRegPath[$scopeName]
-    #             $fontRegistryObject = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties
-    #             $registeredFonts = $fontRegistryObject | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
-    #         } else {
-    #             $registeredFonts = Get-ChildItem -Path $fontFolderPath -File
-    #         }
-    #         $registeredFontsCount = $($registeredFonts.Count)
-    #         Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$registeredFontsCount] font(s)"
 
     #         $nameCount = $Name.Count
     #         Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
