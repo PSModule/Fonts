@@ -31,8 +31,7 @@ function Uninstall-Font {
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Alias('ConfigScope')]
-        [System.Management.Automation.Configuration.ConfigScope[]] $Scope = 'CurrentUser'
+        [Scope[]] $Scope = 'CurrentUser'
     )
 
     DynamicParam {
@@ -43,21 +42,14 @@ function Uninstall-Font {
             Type                            = [string[]]
             Alias                           = @('FontName', 'Font')
             Mandatory                       = $true
-            Position                        = 1
             HelpMessage                     = 'Name of the font to uninstall.'
             ValueFromPipeline               = $true
             ValueFromPipelineByPropertyName = $true
             ValidationErrorMessage          = "The font name provided was not found in the selected scope [$Scope]."
-            ValidateSet                     = switch ($Scope) {
-                'AllUsers' {
-                    (Get-Font -Scope 'AllUsers').Name
-                }
-                'CurrentUser' {
-                    (Get-Font -Scope 'CurrentUser').Name
-                }
-                default {
-                    (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
-                }
+            ValidateSet                     = if ([string]::IsNullOrEmpty($Scope)) {
+                (Get-Font -Scope 'CurrentUser' -Verbose:$false).Name
+            } else {
+                (Get-Font -Scope $Scope -Verbose:$false).Name
             }
             DynamicParamDictionary          = $paramDictionary
         }
@@ -72,7 +64,7 @@ function Uninstall-Font {
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             $errorMessage = @"
-Administrator rights are required to uninstall fonts in [$($script:fontFolderPath['AllUsers'])].
+Administrator rights are required to uninstall fonts in [$($script:FontFolderPath['AllUsers'])].
 Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
 "@
             throw $errorMessage
@@ -86,20 +78,20 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
         $scopeCount = $Scope.Count
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
-        foreach ($ScopeItem in $Scope) {
+        foreach ($scopeItem in $Scope) {
             $scopeName = $scopeItem.ToString()
-            $fontDestinationRegPath = $script:fontRegPath[$scopeName]
 
             $nameCount = $Name.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
             foreach ($fontName in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Processing"
-                $font = Get-Font -Name $fontName -Scope $Scope -Verbose:$false
-                $filePath = $font.path
+                $font = Get-Font -Name $fontName -Scope $Scope
+                Write-Verbose ($font | Out-String) -Verbose
+                $filePath = $font.Path
 
                 $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
                 if (-not $fileExists) {
-                    Write-Warning "[$fontName] - File [$filePath] does not exist. Skipping."
+                    Write-Warning "[$functionName] - [$scopeName] - [$fontName] - File [$filePath] does not exist. Skipping."
                 } else {
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath]"
                     $retryCount = 0
@@ -128,12 +120,16 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     }
                 }
 
-                $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
-                if (-not $fontRegistryPathExists) {
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
-                } else {
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font with path [$fontDestinationRegPath]"
-                    Remove-ItemProperty -Path $fontDestinationRegPath -Name $fontName -Force -ErrorAction Stop
+                if ($script:OS -eq 'Windows') {
+                    $fontDestinationRegPath = $script:FontRegPathMap[$scopeName]
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Checking if font is registered at path [$fontDestinationRegPath]"
+                    $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
+                    if (-not $fontRegistryPathExists) {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
+                    } else {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font with path [$fontDestinationRegPath]"
+                        Remove-ItemProperty -Path $fontDestinationRegPath -Name $fontName -Force -ErrorAction Stop
+                    }
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
             }

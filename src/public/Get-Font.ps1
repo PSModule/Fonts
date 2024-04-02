@@ -46,15 +46,12 @@
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Alias('ConfigScope')]
-        [System.Management.Automation.Configuration.ConfigScope[]] $Scope = 'CurrentUser'
+        [Scope[]] $Scope = 'CurrentUser'
     )
 
     begin {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
-
-        $fonts = [System.Collections.Generic.List[PSCustomObject]]::new()
     }
 
     process {
@@ -64,35 +61,33 @@
             $scopeName = $ScopeItem.ToString()
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
-            $fontRegistryPath = $script:fontRegPath[$scopeName]
-            $fontRegistryObject = (Get-ItemProperty -Path $fontRegistryPath).PSObject.Properties
-            $registeredFonts = $fontRegistryObject | Where-Object { $_.Name -notlike 'PS*' } # Remove PS* properties
-            $registeredFontsCount = $($registeredFonts.Count)
-            Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$registeredFontsCount] font(s)"
-
+            $fontFolderPath = $script:FontFolderPathMap[$script:OS][$scopeName]
+            Write-Verbose "[$functionName] - [$scopeName] - Font folder path: [$fontFolderPath]"
+            $folderExists = Test-Path -Path $fontFolderPath
+            Write-Verbose "[$functionName] - [$scopeName] - Folder exists: [$folderExists]"
+            if (-not $folderExists) {
+                return $fonts
+            }
+            $installedFonts = Get-ChildItem -Path $fontFolderPath -File
+            $installedFontsCount = $($installedFonts.Count)
+            Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$installedFontsCount] font(s)"
             $nameCount = $Name.Count
             Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
             foreach ($fontFilter in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
-                $filteredFonts = $registeredFonts | Where-Object { $_.Name -like $fontFilter }
+                $filteredFonts = $installedFonts | Where-Object { $_.Name -like "*$fontFilter*" }
 
                 foreach ($fontItem in $filteredFonts) {
-                    $fontName = $fontItem.Name
-                    $fontPath = if ($Scope -eq 'AllUsers') {
-                        Join-Path -Path $env:windir -ChildPath "Fonts/$($fontItem.Value)"
-                    } else {
-                        $fontItem.Value
-                    }
+                    $fontName = $fontItem.BaseName
+                    $fontPath = $fontItem.FullName
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
 
-                    $font = [PSCustomObject]@{
+                    [PSCustomObject]@{
                         Name  = $fontName
                         Path  = $fontPath
                         Scope = $fontScope
                     }
-
-                    $fonts.Add($font)
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Done"
             }
@@ -100,8 +95,5 @@
         }
     }
 
-    end {
-        Write-Verbose "[$functionName] - Done"
-        return $fonts
-    }
+    end {}
 }
