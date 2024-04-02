@@ -90,19 +90,10 @@ function Install-Font {
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             $errorMessage = @"
-Administrator rights are required to install fonts in [$($script:fontFolderPathMap[$os]['AllUsers'])].
+Administrator rights are required to install fonts in [$($script:FontFolderPathMap[$script:OS]['AllUsers'])].
 Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
 "@
             throw $errorMessage
-        }
-        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-            'Windows'
-        } elseif ($IsLinux) {
-            'Linux'
-        } elseif ($IsMacOS) {
-            'MacOS'
-        } else {
-            throw 'Unsupported OS'
         }
         $maxRetries = 10
         $retryIntervalSeconds = 1
@@ -113,7 +104,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
         foreach ($scopeItem in $Scope) {
             $scopeName = $scopeItem.ToString()
-            $fontDestinationFolderPath = $script:fontFolderPathMap[$os][$scopeName]
+            $fontDestinationFolderPath = $script:FontFolderPathMap[$script:OS][$scopeName]
             $pathCount = $Path.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$pathCount] path(s)"
             foreach ($PathItem in $Path) {
@@ -198,19 +189,19 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         continue
                     }
                     $registeredFontName = "$fontName ($fontType)"
-                    if ($os -eq 'Windows') {
+                    if ($script:OS -eq 'Windows') {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
                         $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontDestinationFilePath }
                         $params = @{
                             Name         = $registeredFontName
-                            Path         = $script:fontRegPathMap[$scopeName]
+                            Path         = $script:FontRegPathMap[$scopeName]
                             PropertyType = 'string'
                             Value        = $regValue
                             Force        = $true
                             ErrorAction  = 'Stop'
                         }
                         $null = New-ItemProperty @params
-                    } elseif ($os -eq 'Linux') {
+                    } elseif ($script:OS -eq 'Linux') {
                         fc-cache -fv
                     }
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"

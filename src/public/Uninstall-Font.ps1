@@ -62,19 +62,9 @@ function Uninstall-Font {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
 
-        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-            'Windows'
-        } elseif ($IsLinux) {
-            'Linux'
-        } elseif ($IsMacOS) {
-            'MacOS'
-        } else {
-            throw 'Unsupported OS'
-        }
-
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             $errorMessage = @"
-Administrator rights are required to uninstall fonts in [$($script:fontFolderPath['AllUsers'])].
+Administrator rights are required to uninstall fonts in [$($script:FontFolderPath['AllUsers'])].
 Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
 "@
             throw $errorMessage
@@ -130,8 +120,8 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     }
                 }
 
-                if ($os -eq 'Windows') {
-                    $fontDestinationRegPath = $script:fontRegPathMap[$scopeName]
+                if ($script:OS -eq 'Windows') {
+                    $fontDestinationRegPath = $script:FontRegPathMap[$scopeName]
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Checking if font is registered at path [$fontDestinationRegPath]"
                     $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
                     if (-not $fontRegistryPathExists) {

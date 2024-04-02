@@ -52,16 +52,6 @@
     begin {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
-
-        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-            'Windows'
-        } elseif ($IsLinux) {
-            'Linux'
-        } elseif ($IsMacOS) {
-            'MacOS'
-        } else {
-            throw 'Unsupported OS'
-        }
     }
 
     process {
@@ -71,7 +61,7 @@
             $scopeName = $ScopeItem.ToString()
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
-            $fontFolderPath = $script:fontFolderPathMap[$os][$scopeName]
+            $fontFolderPath = $script:FontFolderPathMap[$script:OS][$scopeName]
             Write-Verbose "[$functionName] - [$scopeName] - Font folder path: [$fontFolderPath]"
             $folderExists = Test-Path -Path $fontFolderPath
             Write-Verbose "[$functionName] - [$scopeName] - Folder exists: [$folderExists]"
