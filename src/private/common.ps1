@@ -3,7 +3,6 @@
     AllUsers    = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts'
 }
 
-# $script:fontFolderPathMap = @{
 $script:fontFolderPathMap = @{
     'Windows' = @{
         CurrentUser = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
