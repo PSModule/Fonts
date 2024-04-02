@@ -22,16 +22,23 @@ Describe 'Fonts' {
         It 'The function should be available' {
             Get-Command -Name 'Get-Font' | Should -Not -BeNull
         }
-        It 'The function should return a list of fonts' {
-            { Get-Font -Verbose } | Should -Not -Throw
+
+        Context 'CurrentUser' {
+            It 'Should return a list of fonts' {
+                {
+                    $fonts = Get-Font -Verbose
+                    Write-Verbose ($fonts | Out-String) -Verbose
+                } | Should -Not -Throw
+            }
         }
 
-        It 'The function should return a list of fonts for all users' {
-            { Get-Font -Scope AllUsers -Verbose } | Should -Not -Throw
-        }
-
-        It 'The function should return a list of fonts for the current user' {
-            { Get-Font -Scope CurrentUser -Verbose } | Should -Not -Throw
+        Context 'AllUsers' {
+            It 'Should return a list of fonts' {
+                {
+                    $fonts = Get-Font -Scope AllUsers -Verbose
+                    Write-Verbose ($fonts | Out-String) -Verbose
+                } | Should -Not -Throw
+            }
         }
     }
 
