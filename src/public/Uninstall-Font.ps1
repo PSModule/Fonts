@@ -47,16 +47,10 @@ function Uninstall-Font {
             ValueFromPipeline               = $true
             ValueFromPipelineByPropertyName = $true
             ValidationErrorMessage          = "The font name provided was not found in the selected scope [$Scope]."
-            ValidateSet                     = switch ($Scope) {
-                'AllUsers' {
-                    (Get-Font -Scope 'AllUsers').Name
-                }
-                'CurrentUser' {
-                    (Get-Font -Scope 'CurrentUser').Name
-                }
-                default {
-                    (Get-Font -Scope 'CurrentUser').Name + (Get-Font -Scope 'AllUsers').Name
-                }
+            ValidateSet                     = if ([string]::IsNullOrEmpty($Scope)) {
+                (Get-Font -Scope 'CurrentUser' -Verbose:$false).Name
+            } else {
+                (Get-Font -Scope $Scope -Verbose:$false).Name
             }
             DynamicParamDictionary          = $paramDictionary
         }
@@ -107,7 +101,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                 $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
                 if (-not $fileExists) {
-                    Write-Warning "[$fontName] - File [$filePath] does not exist. Skipping."
+                    Write-Warning "[$functionName] - [$scopeName] - [$fontName] - File [$filePath] does not exist. Skipping."
                 } else {
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath]"
                     $retryCount = 0
