@@ -95,8 +95,9 @@ Please run the command again with elevated rights (Run as Administrator) or prov
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
             foreach ($fontName in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Processing"
-                $font = Get-Font -Name $fontName -Scope $Scope #-Verbose:$false
-                $filePath = $font.path
+                $font = Get-Font -Name $fontName -Scope $Scope -Verbose:$false
+                Write-Verbose ($font | Out-String) -Verbose
+                $filePath = $font.Path
 
                 $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
                 if (-not $fileExists) {
