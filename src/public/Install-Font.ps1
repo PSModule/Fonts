@@ -90,12 +90,21 @@ function Install-Font {
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             $errorMessage = @"
-Administrator rights are required to install fonts in [$($script:fontFolderPath['AllUsers'])].
+Administrator rights are required to install fonts in [$($script:fontFolderPathMap[$os]['AllUsers'])].
 Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
 "@
             throw $errorMessage
         }
 
+        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+            'Windows'
+        } elseif ($IsLinux) {
+            'Linux'
+        } elseif ($IsMacOS) {
+            'MacOS'
+        } else {
+            throw 'Unsupported OS'
+        }
         $maxRetries = 10
         $retryIntervalSeconds = 1
     }
@@ -105,9 +114,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
         foreach ($scopeItem in $Scope) {
             $scopeName = $scopeItem.ToString()
-            $fontDestinationFolderPath = $script:fontFolderPath[$scopeName]
-            $fontDestinationRegPath = $script:fontRegPath[$scopeName]
-
+            $fontDestinationFolderPath = $script:fontFolderPathMap[$os][$scopeName]
             $pathCount = $Path.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$pathCount] path(s)"
             foreach ($PathItem in $Path) {
@@ -124,10 +131,10 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Folder found"
                     Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Gathering font(s) to install"
                     $fontFiles = Get-ChildItem -Path $item.FullName -ErrorAction Stop -File -Recurse:$Recurse
-                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Found [$($FontFiles.Count)] font file(s)"
+                    Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Found [$($fontFiles.Count)] font file(s)"
                 } else {
                     Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - File found"
-                    $FontFiles = $Item
+                    $fontFiles = $Item
                 }
 
                 foreach ($fontFile in $fontFiles) {
@@ -136,8 +143,8 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
-                    $fontFileDestinationPath = Join-Path -Path $fontDestinationFolderPath -ChildPath $fontFileName
-                    $fontFileAlreadyInstalled = Test-Path -Path $fontFileDestinationPath
+                    $fontDestinationFilePath = Join-Path -Path $fontDestinationFolderPath -ChildPath $fontFileName
+                    $fontFileAlreadyInstalled = Test-Path -Path $fontDestinationFilePath
                     if ($fontFileAlreadyInstalled) {
                         if ($Force) {
                             Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Already installed. Forcing install."
@@ -169,7 +176,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                     do {
                         try {
-                            $null = $fontFile.CopyTo($fontFileDestinationPath)
+                            $null = $fontFile.CopyTo($fontDestinationFilePath)
                             $fileCopied = $true
                         } catch {
                             $retryCount++
@@ -187,17 +194,19 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         continue
                     }
                     $registeredFontName = "$fontName ($fontType)"
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
-                    $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontFileDestinationPath }
-                    $params = @{
-                        Name         = $registeredFontName
-                        Path         = $fontDestinationRegPath
-                        PropertyType = 'string'
-                        Value        = $regValue
-                        Force        = $true
-                        ErrorAction  = 'Stop'
+                    if ($os -eq 'Windows') {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
+                        $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontDestinationFilePath }
+                        $params = @{
+                            Name         = $registeredFontName
+                            Path         = $script:fontRegPath[$scopeName]
+                            PropertyType = 'string'
+                            Value        = $regValue
+                            Force        = $true
+                            ErrorAction  = 'Stop'
+                        }
+                        $null = New-ItemProperty @params
                     }
-                    $null = New-ItemProperty @params
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Done"
