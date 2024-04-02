@@ -203,7 +203,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontDestinationFilePath }
                         $params = @{
                             Name         = $registeredFontName
-                            Path         = $script:fontRegPath[$scopeName]
+                            Path         = $script:fontRegPathMap[$scopeName]
                             PropertyType = 'string'
                             Value        = $regValue
                             Force        = $true
