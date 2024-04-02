@@ -132,6 +132,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                 if ($os -eq 'Windows') {
                     $fontDestinationRegPath = $script:fontRegPathMap[$scopeName]
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Checking if font is registered at path [$fontDestinationRegPath]"
                     $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
                     if (-not $fontRegistryPathExists) {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
