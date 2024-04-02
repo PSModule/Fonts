@@ -85,7 +85,7 @@
             Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
             foreach ($fontFilter in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
-                $filteredFonts = $installedFonts | Where-Object { $_.Name -like $fontFilter }
+                $filteredFonts = $installedFonts | Where-Object { $_.Name -like "*$fontFilter*" }
 
                 foreach ($fontItem in $filteredFonts) {
                     $fontName = $fontItem.BaseName
