@@ -46,7 +46,6 @@
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Alias('ConfigScope')]
         [Scope[]] $Scope = 'CurrentUser'
     )
 
@@ -63,6 +62,7 @@
         } else {
             throw 'Unsupported OS'
         }
+        $fonts = [System.Collections.Generic.List[PSCustomObject]]::new()
     }
 
     process {
@@ -75,7 +75,7 @@
             $fontFolderPath = $script:fontFolderPathMap[$os][$scopeName]
             Write-Verbose "[$functionName] - [$scopeName] - Font folder path: [$fontFolderPath]"
             if (-not (Test-Path -Path $fontFolderPath)) {
-                throw "[$functionName] - [$scopeName] - Font folder path does not exist: [$fontFolderPath]"
+                return $fonts
             }
         }
     }

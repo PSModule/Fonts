@@ -31,8 +31,7 @@ function Uninstall-Font {
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Alias('ConfigScope')]
-        [System.Management.Automation.Configuration.ConfigScope[]] $Scope = 'CurrentUser'
+        [Scope[]] $Scope = 'CurrentUser'
     )
 
     DynamicParam {

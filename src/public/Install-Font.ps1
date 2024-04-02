@@ -73,8 +73,7 @@ function Install-Font {
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Alias('ConfigScope')]
-        [System.Management.Automation.Configuration.ConfigScope[]] $Scope = 'CurrentUser',
+        [Scope[]] $Scope = 'CurrentUser',
 
         # Recurse will install all fonts in the specified folder and subfolders.
         [Parameter()]
