@@ -42,19 +42,21 @@ Describe 'Fonts' {
         }
     }
 
-    # Context 'Function: Install-Font' {
-    #     It 'The function should be available' {
-    #         Get-Command -Name 'Install-Font' | Should -Not -BeNull
-    #     }
-    #     It 'The function should install a font' {
-    #         $fontPath = Join-Path -Path $PSScriptRoot -ChildPath 'Fonts/CascadiaCodePL.ttf'
-    #         { Install-Font -Path $fontPath -Verbose } | Should -Not -Throw
-    #     }
-    #     It 'Getting the font should return the installed font' {
-    #         Write-Verbose (Get-Font | Out-String) -Verbose
-    #         { Get-Font } | Should -Not -Throw
-    #     }
-    # }
+    Context 'Function: Install-Font' {
+        It 'Should be available' {
+            Get-Command -Name 'Install-Font' | Should -Not -BeNull
+        }
+        It 'Should install a font' {
+            $fontPath = Join-Path -Path $PSScriptRoot -ChildPath 'Fonts/CascadiaCodePL.ttf'
+            { Install-Font -Path $fontPath -Verbose } | Should -Not -Throw
+        }
+        It 'Should return the installed fonts' {
+            {
+                $fonts = Get-Font
+                Write-Verbose ($fonts | Out-String) -Verbose
+            } | Should -Not -Throw
+        }
+    }
 
     # Context 'Function: Uninstall-Font' {
     #     It 'The function should be available' {
