@@ -50,11 +50,10 @@ Describe 'Fonts' {
             $fontPath = Join-Path -Path $PSScriptRoot -ChildPath 'Fonts/CascadiaCodePL.ttf'
             { Install-Font -Path $fontPath -Verbose } | Should -Not -Throw
         }
-        It 'Should return the installed fonts' {
-            {
-                $fonts = Get-Font
-                Write-Verbose ($fonts | Out-String) -Verbose
-            } | Should -Not -Throw
+        It "Should return the installed font 'CascadiaCodePL'" {
+            $font = Get-Font -Name 'CascadiaCodePL'
+            Write-Verbose ($font | Out-String) -Verbose
+            $font | Should -Not -BeNullOrEmpty
         }
     }
 
