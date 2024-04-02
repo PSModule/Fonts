@@ -62,7 +62,6 @@
         } else {
             throw 'Unsupported OS'
         }
-        $fonts = [System.Collections.Generic.List[PSCustomObject]]::new()
     }
 
     process {
@@ -94,13 +93,11 @@
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
 
-                    $font = [PSCustomObject]@{
+                    [PSCustomObject]@{
                         Name  = $fontName
                         Path  = $fontPath
                         Scope = $fontScope
                     }
-
-                    $fonts.Add($font)
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Done"
             }
@@ -108,8 +105,5 @@
         }
     }
 
-    end {
-        Write-Verbose "[$functionName] - Done"
-        return $fonts
-    }
+    end {}
 }
