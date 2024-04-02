@@ -69,6 +69,16 @@ function Uninstall-Font {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
 
+        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+            'Windows'
+        } elseif ($IsLinux) {
+            'Linux'
+        } elseif ($IsMacOS) {
+            'MacOS'
+        } else {
+            throw 'Unsupported OS'
+        }
+
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             $errorMessage = @"
 Administrator rights are required to uninstall fonts in [$($script:fontFolderPath['AllUsers'])].
@@ -85,9 +95,8 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
         $scopeCount = $Scope.Count
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
-        foreach ($ScopeItem in $Scope) {
+        foreach ($scopeItem in $Scope) {
             $scopeName = $scopeItem.ToString()
-            $fontDestinationRegPath = $script:fontRegPath[$scopeName]
 
             $nameCount = $Name.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
@@ -127,12 +136,15 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     }
                 }
 
-                $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
-                if (-not $fontRegistryPathExists) {
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
-                } else {
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font with path [$fontDestinationRegPath]"
-                    Remove-ItemProperty -Path $fontDestinationRegPath -Name $fontName -Force -ErrorAction Stop
+                if ($os -eq 'Windows') {
+                    $fontDestinationRegPath = $script:fontRegPath[$scopeName]
+                    $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
+                    if (-not $fontRegistryPathExists) {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
+                    } else {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font with path [$fontDestinationRegPath]"
+                        Remove-ItemProperty -Path $fontDestinationRegPath -Name $fontName -Force -ErrorAction Stop
+                    }
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
             }

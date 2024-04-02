@@ -95,16 +95,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 "@
             throw $errorMessage
         }
-
-        $os = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-            'Windows'
-        } elseif ($IsLinux) {
-            'Linux'
-        } elseif ($IsMacOS) {
-            'MacOS'
-        } else {
-            throw 'Unsupported OS'
-        }
+        
         $maxRetries = 10
         $retryIntervalSeconds = 1
     }

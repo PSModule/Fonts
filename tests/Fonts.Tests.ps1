@@ -58,12 +58,18 @@ Describe 'Fonts' {
         }
     }
 
-    # Context 'Function: Uninstall-Font' {
-    #     It 'The function should be available' {
-    #         Get-Command -Name 'Uninstall-Font' | Should -Not -BeNull
-    #     }
-    #     It 'The function should uninstall a font' {
-    #         { Uninstall-Font -Name 'Cascadia Code PL' -Scope AllUsers -Verbose } | Should -Not -Throw
-    #     }
-    # }
+    Context 'Function: Uninstall-Font' {
+        It 'Should be available' {
+            Get-Command -Name 'Uninstall-Font' | Should -Not -BeNull
+        }
+        It 'Should uninstall a font' {
+            { Uninstall-Font -Name 'CascadiaCodePL' -Verbose } | Should -Not -Throw
+        }
+        It 'Should return the installed fonts' {
+            {
+                $fonts = Get-Font
+                Write-Verbose ($fonts | Out-String) -Verbose
+            } | Should -Not -Throw
+        }
+    }
 }

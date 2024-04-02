@@ -89,7 +89,7 @@
                 $filteredFonts = $installedFonts | Where-Object { $_.Name -like $fontFilter }
 
                 foreach ($fontItem in $filteredFonts) {
-                    $fontName = $fontItem.Name
+                    $fontName = $fontItem.BaseName
                     $fontPath = $fontItem.FullName
                     $fontScope = $scopeName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Found [$fontName] at [$fontPath]"
