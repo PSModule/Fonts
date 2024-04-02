@@ -143,6 +143,11 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
+                    $folderExists = Test-Path -Path $fontDestinationFolderPath -ErrorAction SilentlyContinue
+                    if (-not $folderExists) {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Creating folder [$fontDestinationFolderPath]"
+                        $null = New-Item -Path $fontDestinationFolderPath -ItemType Directory -Force
+                    }
                     $fontDestinationFilePath = Join-Path -Path $fontDestinationFolderPath -ChildPath $fontFileName
                     $fontFileAlreadyInstalled = Test-Path -Path $fontDestinationFilePath
                     if ($fontFileAlreadyInstalled) {
@@ -206,6 +211,8 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                             ErrorAction  = 'Stop'
                         }
                         $null = New-ItemProperty @params
+                    } elseif ($os -eq 'Linux') {
+                        fc-cache -fv
                     }
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
