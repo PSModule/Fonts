@@ -42,7 +42,6 @@ function Uninstall-Font {
             Type                            = [string[]]
             Alias                           = @('FontName', 'Font')
             Mandatory                       = $true
-            Position                        = 1
             HelpMessage                     = 'Name of the font to uninstall.'
             ValueFromPipeline               = $true
             ValueFromPipelineByPropertyName = $true
@@ -96,7 +95,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
             foreach ($fontName in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Processing"
-                $font = Get-Font -Name $fontName -Scope $Scope -Verbose:$false
+                $font = Get-Font -Name $fontName -Scope $Scope #-Verbose:$false
                 $filePath = $font.path
 
                 $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
