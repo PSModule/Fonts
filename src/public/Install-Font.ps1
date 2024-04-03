@@ -149,21 +149,6 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         }
                     }
 
-                    $fontType = switch ($fontFile.Extension) {
-                        '.ttf' { 'TrueType' }                 # TrueType Font
-                        '.otf' { 'OpenType' }                 # OpenType Font
-                        '.ttc' { 'TrueType' }                 # TrueType Font Collection
-                        '.pfb' { 'PostScript Type 1' }        # PostScript Type 1 Font
-                        '.pfm' { 'PostScript Type 1' }        # PostScript Type 1 Outline Font
-                        '.woff' { 'Web Open Font Format' }    # Web Open Font Format
-                        '.woff2' { 'Web Open Font Format 2' } # Web Open Font Format 2
-                    }
-
-                    if ($null -eq $fontType) {
-                        # Write-Warning "[$fontFileName] - Unknown font type. Skipping."
-                        continue
-                    }
-
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Installing font"
 
                     $retryCount = 0
@@ -188,8 +173,17 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     if (-not $fileCopied) {
                         continue
                     }
-                    $registeredFontName = "$fontName ($fontType)"
                     if ($script:OS -eq 'Windows') {
+                        $fontType = switch ($fontFile.Extension) {
+                            '.ttf' { 'TrueType' }                 # TrueType Font
+                            '.otf' { 'OpenType' }                 # OpenType Font
+                            '.ttc' { 'TrueType' }                 # TrueType Font Collection
+                            '.pfb' { 'PostScript Type 1' }        # PostScript Type 1 Font
+                            '.pfm' { 'PostScript Type 1' }        # PostScript Type 1 Outline Font
+                            '.woff' { 'Web Open Font Format' }    # Web Open Font Format
+                            '.woff2' { 'Web Open Font Format 2' } # Web Open Font Format 2
+                        }
+                        $registeredFontName = "$fontName ($fontType)"
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
                         $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontDestinationFilePath }
                         $params = @{

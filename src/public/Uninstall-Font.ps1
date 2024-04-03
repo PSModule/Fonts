@@ -121,14 +121,14 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                 }
 
                 if ($script:OS -eq 'Windows') {
-                    $fontDestinationRegPath = $script:FontRegPathMap[$scopeName]
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Checking if font is registered at path [$fontDestinationRegPath]"
-                    $fontRegistryPathExists = Get-ItemProperty -Path $fontDestinationRegPath -Name $fontName -ErrorAction SilentlyContinue
-                    if (-not $fontRegistryPathExists) {
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Searching for font in registry"
+                    $keys = Get-ItemProperty -Path $script:FontRegPathMap[$scopeName]
+                    $key = $keys.PSObject.Properties | Where-Object { $_.Value -eq $filePath } | Select-Object -ExpandProperty Name
+                    if (-not $key) {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
                     } else {
-                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font with path [$fontDestinationRegPath]"
-                        Remove-ItemProperty -Path $fontDestinationRegPath -Name $fontName -Force -ErrorAction Stop
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font"
+                        $key | Remove-ItemProperty -Force -ErrorAction Stop
                     }
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
