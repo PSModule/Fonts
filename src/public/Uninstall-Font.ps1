@@ -127,8 +127,9 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     if (-not $key) {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
                     } else {
-                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font [$($key.Name)]"
-                        $key | Remove-ItemProperty -Force -ErrorAction Stop
+                        $keyName = $key.Name
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font [$keyName]"
+                        Remove-ItemProperty -Path $script:FontRegPathMap[$scopeName] -Name $keyName -Force -ErrorAction Stop
                     }
                 }
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
