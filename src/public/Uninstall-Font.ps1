@@ -139,6 +139,14 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     }
 
     end {
+        if ($script:OS -eq 'Linux') {
+            if ($Verbose) {
+                Write-Verbose 'Refreshing font cache'
+                fc-cache -fv
+            } else {
+                fc-cache -f
+            }
+        }
         Write-Verbose "[$functionName] - Done"
     }
 }
