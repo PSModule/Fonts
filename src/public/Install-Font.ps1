@@ -195,8 +195,6 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                             ErrorAction  = 'Stop'
                         }
                         $null = New-ItemProperty @params
-                    } elseif ($script:OS -eq 'Linux') {
-                        fc-cache -fv
                     }
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Done"
                 }
@@ -209,6 +207,13 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     }
 
     end {
+        if ($script:OS -eq 'Linux') {
+            if ($Verbose) {
+                fc-cache -fv
+            } else {
+                fc-cache -f
+            }
+        }
         Write-Verbose "[$functionName] - Done"
     }
 }
