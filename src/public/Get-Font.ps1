@@ -76,7 +76,8 @@
             foreach ($fontFilter in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
                 $filteredFonts = $installedFonts | Where-Object { $_.Name -like $fontFilter }
-
+                Write-Verbose "Filtered fonts: "
+                Write-Verbose ($filteredFonts | Out-String)
                 foreach ($fontItem in $filteredFonts) {
                     $fontName = $fontItem.BaseName
                     $fontPath = $fontItem.FullName
