@@ -69,6 +69,7 @@
                 return $fonts
             }
             $installedFonts = Get-ChildItem -Path $fontFolderPath -File
+            Write-Verbose ($installedFonts | Out-String) -Verbose
             $installedFontsCount = $($installedFonts.Count)
             Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$installedFontsCount] font(s)"
             $nameCount = $Name.Count
