@@ -49,6 +49,7 @@ Describe 'Fonts' {
         It 'Should install a font' {
             $fontPath = Join-Path -Path $PSScriptRoot -ChildPath 'Fonts/CascadiaCodePL.ttf'
             { Install-Font -Path $fontPath -Verbose } | Should -Not -Throw
+            Write-Verbose "Installed font: 'CascadiaCodePL'" -Verbose
             Write-Verbose (Get-Font | Out-String) -Verbose
         }
         It "Should return the installed font 'CascadiaCodePL'" {
