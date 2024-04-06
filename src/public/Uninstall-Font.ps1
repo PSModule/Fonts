@@ -40,7 +40,6 @@ function Uninstall-Font {
             ValueFromPipelineByPropertyName
         )]
         [SupportsWildcards()]
-        [ArgumentCompleter({ Uninstall-FontNameCompleter @args })]
         [string[]] $Name
     )
 
@@ -142,7 +141,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
 Register-ArgumentCompleter -CommandName Uninstall-Font -ParameterName Name -ScriptBlock {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
+    $null = $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters
     if ([string]::IsNullOrEmpty($fakeBoundParameters['Scope'])) {
         Get-Font -Scope 'CurrentUser' | Where-Object { $_.Name -like "$wordToComplete*" } | Select-Object -ExpandProperty Name
     } else {
