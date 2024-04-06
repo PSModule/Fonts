@@ -69,16 +69,13 @@
                 return $fonts
             }
             $installedFonts = Get-ChildItem -Path $fontFolderPath -File
-            Write-Verbose ($installedFonts | Out-String) -Verbose | Select-Object -Property Name, BaseName, FullName
             $installedFontsCount = $($installedFonts.Count)
             Write-Verbose "[$functionName] - [$scopeName] - Filtering from [$installedFontsCount] font(s)"
             $nameCount = $Name.Count
             Write-Verbose "[$functionName] - [$scopeName] - Filtering based on [$nameCount] name pattern(s)"
             foreach ($fontFilter in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontFilter] - Filtering font(s)"
-                $filteredFonts = $installedFonts | Where-Object { $_.Name -like $fontFilter }
-                Write-Verbose "Filtered fonts: "
-                Write-Verbose ($filteredFonts | Out-String)
+                $filteredFonts = $installedFonts | Where-Object { $_.BaseName -like $fontFilter }
                 foreach ($fontItem in $filteredFonts) {
                     $fontName = $fontItem.BaseName
                     $fontPath = $fontItem.FullName
