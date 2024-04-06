@@ -49,6 +49,8 @@ Describe 'Fonts' {
         It 'Should install a font' {
             $fontPath = Join-Path -Path $PSScriptRoot -ChildPath 'Fonts/CascadiaCodePL.ttf'
             { Install-Font -Path $fontPath -Verbose } | Should -Not -Throw
+            Write-Verbose "Installed font: 'CascadiaCodePL'" -Verbose
+            Write-Verbose (Get-Font | Out-String) -Verbose
         }
         It "Should return the installed font 'CascadiaCodePL'" {
             $font = Get-Font -Name 'CascadiaCodePL'
@@ -65,6 +67,16 @@ Describe 'Fonts' {
             { Uninstall-Font -Name 'CascadiaCodePL' -Verbose } | Should -Not -Throw
         }
         It 'Should NOT return the uninstalled font' {
+            $font = Get-Font -Name 'CascadiaCodePL'
+            Write-Verbose ($font | Out-String) -Verbose
+            $font | Should -BeNullOrEmpty
+        }
+        It 'Should install and uninstall a font based on wildcard' {
+            $fontPath = Join-Path -Path $PSScriptRoot -ChildPath 'Fonts/CascadiaCodePL.ttf'
+            { Install-Font -Path $fontPath -Verbose } | Should -Not -Throw
+            Write-Verbose "Installed font: 'CascadiaCodePL'" -Verbose
+            Write-Verbose (Get-Font | Out-String) -Verbose
+            { Uninstall-Font -Name 'CascadiaCode*' -Verbose } | Should -Not -Throw
             $font = Get-Font -Name 'CascadiaCodePL'
             Write-Verbose ($font | Out-String) -Verbose
             $font | Should -BeNullOrEmpty

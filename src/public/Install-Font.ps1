@@ -133,6 +133,14 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     $fontFilePath = $fontFile.FullName
                     Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Processing"
 
+                    # Check if font is supported
+                    $fontExtension = $fontFile.Extension.ToLower()
+                    $supportedFont = $script:SupportedFonts | Where-Object { $_.Extension -eq $fontExtension }
+                    if (-not $supportedFont) {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Font type [$fontExtension] is not supported. Skipping."
+                        continue
+                    }
+
                     $folderExists = Test-Path -Path $fontDestinationFolderPath -ErrorAction SilentlyContinue
                     if (-not $folderExists) {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Creating folder [$fontDestinationFolderPath]"
@@ -174,15 +182,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         continue
                     }
                     if ($script:OS -eq 'Windows') {
-                        $fontType = switch ($fontFile.Extension) {
-                            '.ttf' { 'TrueType' }                 # TrueType Font
-                            '.otf' { 'OpenType' }                 # OpenType Font
-                            '.ttc' { 'TrueType' }                 # TrueType Font Collection
-                            '.pfb' { 'PostScript Type 1' }        # PostScript Type 1 Font
-                            '.pfm' { 'PostScript Type 1' }        # PostScript Type 1 Outline Font
-                            '.woff' { 'Web Open Font Format' }    # Web Open Font Format
-                            '.woff2' { 'Web Open Font Format 2' } # Web Open Font Format 2
-                        }
+                        $fontType = $script:SupportedFonts | Where-Object { $_.Extension -eq $fontExtension } | Select-Object -ExpandProperty Type
                         $registeredFontName = "$fontName ($fontType)"
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
                         $regValue = if ('AllUsers' -eq $Scope) { $fontFileName } else { $fontDestinationFilePath }
