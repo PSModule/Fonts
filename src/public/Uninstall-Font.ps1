@@ -71,54 +71,57 @@ Please run the command again with elevated rights (Run as Administrator) or prov
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
             foreach ($fontName in $Name) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Processing"
-                $font = Get-Font -Name $fontName -Scope $Scope
-                Write-Verbose ($font | Out-String) -Verbose
-                $filePath = $font.Path
+                $fonts = Get-Font -Name $fontName -Scope $Scope
+                Write-Verbose ($fonts | Out-String)
+                foreach ($font in $fonts) {
 
-                $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
-                if (-not $fileExists) {
-                    Write-Warning "[$functionName] - [$scopeName] - [$fontName] - File [$filePath] does not exist. Skipping."
-                } else {
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath]"
-                    $retryCount = 0
-                    $fileRemoved = $false
-                    do {
-                        try {
-                            Remove-Item -Path $filePath -Force -ErrorAction Stop
-                            $fileRemoved = $true
-                        } catch {
-                            # Common error; 'file in use'. Usually VSCode or any web browser.
-                            $retryCount++
-                            if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
-                                Write-Error $_
-                                Write-Error "Failed [$retryCount/$maxRetries] - Stopping"
-                                break
-                            }
-                            Write-Verbose $_
-                            Write-Verbose "Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
-                            #TODO: Find a way to try to unlock file here.
-                            Start-Sleep -Seconds $retryIntervalSeconds
-                        }
-                    } while (-not $fileRemoved -and $retryCount -lt $maxRetries)
+                    $filePath = $font.Path
 
-                    if (-not $fileRemoved) {
-                        break  # Break to skip unregistering the font if the file could not be removed.
-                    }
-                }
-
-                if ($script:OS -eq 'Windows') {
-                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Searching for font in registry"
-                    $keys = Get-ItemProperty -Path $script:FontRegPathMap[$scopeName]
-                    $key = $keys.PSObject.Properties | Where-Object { $_.Value -eq $filePath }
-                    if (-not $key) {
-                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
+                    $fileExists = Test-Path -Path $filePath -ErrorAction SilentlyContinue
+                    if (-not $fileExists) {
+                        Write-Warning "[$functionName] - [$scopeName] - [$fontName] - File [$filePath] does not exist. Skipping."
                     } else {
-                        $keyName = $key.Name
-                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font [$keyName]"
-                        Remove-ItemProperty -Path $script:FontRegPathMap[$scopeName] -Name $keyName -Force -ErrorAction Stop
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Removing file [$filePath]"
+                        $retryCount = 0
+                        $fileRemoved = $false
+                        do {
+                            try {
+                                Remove-Item -Path $filePath -Force -ErrorAction Stop
+                                $fileRemoved = $true
+                            } catch {
+                                # Common error; 'file in use'.
+                                $retryCount++
+                                if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
+                                    Write-Error $_
+                                    Write-Error "Failed [$retryCount/$maxRetries] - Stopping"
+                                    break
+                                }
+                                Write-Verbose $_
+                                Write-Verbose "Failed [$retryCount/$maxRetries] - Retrying in $retryIntervalSeconds seconds..."
+                                #TODO: Find a way to try to unlock file here.
+                                Start-Sleep -Seconds $retryIntervalSeconds
+                            }
+                        } while (-not $fileRemoved -and $retryCount -lt $maxRetries)
+
+                        if (-not $fileRemoved) {
+                            break  # Break to skip unregistering the font if the file could not be removed.
+                        }
                     }
+
+                    if ($script:OS -eq 'Windows') {
+                        Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Searching for font in registry"
+                        $keys = Get-ItemProperty -Path $script:FontRegPathMap[$scopeName]
+                        $key = $keys.PSObject.Properties | Where-Object { $_.Value -eq $filePath }
+                        if (-not $key) {
+                            Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Font is not registered. Skipping."
+                        } else {
+                            $keyName = $key.Name
+                            Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Unregistering font [$keyName]"
+                            Remove-ItemProperty -Path $script:FontRegPathMap[$scopeName] -Name $keyName -Force -ErrorAction Stop
+                        }
+                    }
+                    Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
                 }
-                Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Done"
             }
             Write-Verbose "[$functionName] - [$scopeName] - Done"
         }
