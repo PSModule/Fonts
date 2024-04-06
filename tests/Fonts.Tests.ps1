@@ -69,5 +69,13 @@ Describe 'Fonts' {
             Write-Verbose ($font | Out-String) -Verbose
             $font | Should -BeNullOrEmpty
         }
+        It "Should uninstall all fonts starting with 'Fira*'" {
+            $fonts = Get-Font -Name 'Fira*'
+            Write-Verbose ($fonts | Out-String) -Verbose
+            { Uninstall-Font -Name 'Fira*' -Verbose } | Should -Not -Throw
+            $fonts = Get-Font -Name 'Fira*'
+            Write-Verbose ($fonts | Out-String) -Verbose
+            $fonts | Should -BeNullOrEmpty
+        }
     }
 }

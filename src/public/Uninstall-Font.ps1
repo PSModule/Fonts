@@ -31,32 +31,18 @@ function Uninstall-Font {
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Scope[]] $Scope = 'CurrentUser'
+        [Scope[]] $Scope = 'CurrentUser',
+
+        # Name of the font to uninstall.
+        [Parameter(
+            Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName
+        )]
+        [SupportsWildcards()]
+        [ArgumentCompleter({ Uninstall-FontCompleter @args })]
+        [string[]] $Name
     )
-
-    DynamicParam {
-        $paramDictionary = New-DynamicParamDictionary
-
-        $dynName = @{
-            Name                            = 'Name'
-            Type                            = [string[]]
-            Alias                           = @('FontName', 'Font')
-            Mandatory                       = $true
-            HelpMessage                     = 'Name of the font to uninstall.'
-            ValueFromPipeline               = $true
-            ValueFromPipelineByPropertyName = $true
-            ValidationErrorMessage          = "The font name provided was not found in the selected scope [$Scope]."
-            ValidateSet                     = if ([string]::IsNullOrEmpty($Scope)) {
-                (Get-Font -Scope 'CurrentUser' -Verbose:$false).Name
-            } else {
-                (Get-Font -Scope $Scope -Verbose:$false).Name
-            }
-            DynamicParamDictionary          = $paramDictionary
-        }
-        New-DynamicParam @dynName
-
-        return $paramDictionary
-    }
 
     begin {
         $functionName = $MyInvocation.MyCommand.Name
