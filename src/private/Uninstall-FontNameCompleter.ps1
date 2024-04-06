@@ -15,13 +15,5 @@
         $fakeBoundParameters
     )
 
-    $possibleValues = if ([string]::IsNullOrEmpty($fakeBoundParameters['Scope'])) {
-        (Get-Font -Scope 'CurrentUser').Name | ForEach-Object { $_ }
-    } else {
-        (Get-Font -Scope $fakeBoundParameters.Scope).Name | ForEach-Object { $_ }
-    }
 
-    $possibleValues | Where-Object {
-        $_ -like "$wordToComplete*"
-    }
 }

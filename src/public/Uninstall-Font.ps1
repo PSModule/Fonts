@@ -139,3 +139,13 @@ Please run the command again with elevated rights (Run as Administrator) or prov
         Write-Verbose "[$functionName] - Done"
     }
 }
+
+Register-ArgumentCompleter -CommandName Uninstall-Font -ParameterName Name -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+    if ([string]::IsNullOrEmpty($fakeBoundParameters['Scope'])) {
+        Get-Font -Scope 'CurrentUser' | Where-Object { $_.Name -like "$wordToComplete*" } | Select-Object -ExpandProperty Name
+    } else {
+        Get-Font -Scope $fakeBoundParameters['Scope'] | Where-Object { $_.Name -like "$wordToComplete*" } | Select-Object -ExpandProperty Name
+    }
+}
