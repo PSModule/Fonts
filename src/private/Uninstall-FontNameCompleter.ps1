@@ -1,4 +1,4 @@
-﻿function Uninstall-FontCompleter {
+﻿function Uninstall-FontNameCompleter {
     <#
         .SYNOPSIS
         Argument completer for the Uninstall-Font cmdlet
@@ -15,7 +15,7 @@
         $fakeBoundParameters
     )
 
-    $possibleValues = if ([string]::IsNullOrEmpty($fakeBoundParameters.Scope)) {
+    $possibleValues = if ([string]::IsNullOrEmpty($fakeBoundParameters['Scope'])) {
         (Get-Font -Scope 'CurrentUser').Name | ForEach-Object { $_ }
     } else {
         (Get-Font -Scope $fakeBoundParameters.Scope).Name | ForEach-Object { $_ }

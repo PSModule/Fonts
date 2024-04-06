@@ -40,7 +40,7 @@ function Uninstall-Font {
             ValueFromPipelineByPropertyName
         )]
         [SupportsWildcards()]
-        [ArgumentCompleter({ Uninstall-FontCompleter @args })]
+        [ArgumentCompleter({ Uninstall-FontNameCompleter @args })]
         [string[]] $Name
     )
 
