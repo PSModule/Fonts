@@ -1,4 +1,4 @@
-﻿#Requires -Modules Admin, DynamicParams
+﻿#Requires -Modules Admin
 
 function Uninstall-Font {
     <#
