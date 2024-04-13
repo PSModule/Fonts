@@ -18,7 +18,7 @@ $script:FontFolderPathMap = @{
     }
 }
 
-$script:OS = if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+$script:OS = if ($IsWindows) {
     'Windows'
 } elseif ($IsLinux) {
     'Linux'

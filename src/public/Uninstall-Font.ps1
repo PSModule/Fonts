@@ -107,7 +107,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         }
                     }
 
-                    if ($script:OS -eq 'Windows') {
+                    if ($IsWindows) {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Searching for font in registry"
                         $keys = Get-ItemProperty -Path $script:FontRegPathMap[$scopeName]
                         $key = $keys.PSObject.Properties | Where-Object { $_.Value -eq $filePath }
@@ -127,7 +127,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     }
 
     end {
-        if ($script:OS -eq 'Linux') {
+        if ($IsLinux) {
             if ($Verbose) {
                 Write-Verbose 'Refreshing font cache'
                 fc-cache -fv
