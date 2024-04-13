@@ -181,7 +181,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     if (-not $fileCopied) {
                         continue
                     }
-                    if ($script:OS -eq 'Windows') {
+                    if ($IsWindows) {
                         $fontType = $script:SupportedFonts | Where-Object { $_.Extension -eq $fontExtension } | Select-Object -ExpandProperty Type
                         $registeredFontName = "$fontName ($fontType)"
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
@@ -207,7 +207,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     }
 
     end {
-        if ($script:OS -eq 'Linux') {
+        if ($IsLinux) {
             if ($Verbose) {
                 Write-Verbose "Refreshing font cache"
                 fc-cache -fv

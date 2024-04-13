@@ -52,7 +52,6 @@
     begin {
         $functionName = $MyInvocation.MyCommand.Name
         Write-Verbose "[$functionName]"
-        Write-Warning "IsWindows: $IsWindows"
     }
 
     process {
