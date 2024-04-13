@@ -6,6 +6,8 @@ Param(
 )
 
 Write-Verbose "Path to the module: [$Path]" -Verbose
+Write-Verbose $env:NUMBER_OF_PROCESSORS -Verbose
+Write-Verbose $IsWindows -Verbose
 
 Describe 'Fonts' {
     Context 'Module' {

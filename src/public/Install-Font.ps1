@@ -109,7 +109,8 @@ Please run the command again with elevated rights (Run as Administrator) or prov
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$pathCount] path(s)"
             foreach ($PathItem in $Path) {
                 Write-Verbose "[$functionName] - [$scopeName] - [$PathItem] - Processing"
-
+                Write-Verbose $env:NUMBER_OF_PROCESSORS
+                Write-Verbose $IsWindows
                 $pathExists = Test-Path -Path $PathItem -ErrorAction SilentlyContinue
                 if (-not $pathExists) {
                     Write-Error "[$functionName] - [$scopeName] - [$PathItem] - Path not found, skipping."
