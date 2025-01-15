@@ -44,10 +44,7 @@ function Get-Font {
         [string[]] $Name = '*',
 
         # Specifies the scope of the font(s) to get.
-        [Parameter(
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
-        )]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Scope[]] $Scope = 'CurrentUser'
     )
 
