@@ -3,7 +3,7 @@
 This is a PowerShell module for managing fonts.
 It helps you to install, uninstall and list fonts on the system.
 
-## Prerequisites
+## Supported platforms
 
 This module supports managing fonts on Linux, macOS and Windows operating systems.
 
