@@ -1,4 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.2' }
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.3' }
 
 function Get-Font {
     <#
@@ -44,10 +44,7 @@ function Get-Font {
         [string[]] $Name = '*',
 
         # Specifies the scope of the font(s) to get.
-        [Parameter(
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
-        )]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Scope[]] $Scope = 'CurrentUser'
     )
 

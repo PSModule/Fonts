@@ -1,4 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.2' }
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.3' }
 
 function Install-Font {
     <#
@@ -69,10 +69,7 @@ function Install-Font {
         # Scope of the font installation.
         # CurrentUser will install the font for the current user only.
         # AllUsers will install the font so it is available for all users on the system.
-        [Parameter(
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
-        )]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Scope[]] $Scope = 'CurrentUser',
 
         # Recurse will install all fonts in the specified folder and subfolders.
@@ -208,7 +205,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     end {
         if ($IsLinux) {
             if ($Verbose) {
-                Write-Verbose "Refreshing font cache"
+                Write-Verbose 'Refreshing font cache'
                 fc-cache -fv
             } else {
                 fc-cache -f

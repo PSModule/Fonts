@@ -1,4 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.2' }
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.3' }
 
 function Uninstall-Font {
     <#
@@ -24,15 +24,6 @@ function Uninstall-Font {
     [Alias('Uninstall-Fonts')]
     [CmdletBinding()]
     param (
-        # Scope of the font to uninstall.
-        # CurrentUser will uninstall the font for the current user.
-        # AllUsers will uninstall the font so it is removed for all users.
-        [Parameter(
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName
-        )]
-        [Scope[]] $Scope = 'CurrentUser',
-
         # Name of the font to uninstall.
         [Parameter(
             Mandatory,
@@ -40,7 +31,13 @@ function Uninstall-Font {
             ValueFromPipelineByPropertyName
         )]
         [SupportsWildcards()]
-        [string[]] $Name
+        [string[]] $Name,
+
+        # Scope of the font to uninstall.
+        # CurrentUser will uninstall the font for the current user.
+        # AllUsers will uninstall the font so it is removed for all users.
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [Scope[]] $Scope = 'CurrentUser'
     )
 
     begin {
@@ -59,8 +56,6 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     }
 
     process {
-        $Name = $PSBoundParameters['Name']
-
         $scopeCount = $Scope.Count
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
         foreach ($scopeItem in $Scope) {
