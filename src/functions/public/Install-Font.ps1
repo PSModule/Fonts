@@ -1,4 +1,4 @@
-﻿#Requires -Modules Admin
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.2' }
 
 function Install-Font {
     <#

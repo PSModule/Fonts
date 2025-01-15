@@ -1,4 +1,6 @@
-﻿function Get-Font {
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.2' }
+
+function Get-Font {
     <#
         .SYNOPSIS
             Retrieves the installed fonts.
