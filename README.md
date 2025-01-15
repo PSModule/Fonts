@@ -5,7 +5,7 @@ It helps you to install, uninstall and list fonts on the system.
 
 ## Prerequisites
 
-This module currently only supports Windows operating systems.
+This module supports managing fonts on Linux, MacOS and Windows operating systems.
 
 ## Installation
 
