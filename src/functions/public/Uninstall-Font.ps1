@@ -134,7 +134,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     }
 }
 
-Register-ArgumentCompleter -CommandName Uninstall-Font -ParameterName Name -ScriptBlock {
+Register-ArgumentCompleter -CommandName Uninstall-Font, Get-Font -ParameterName Name -ScriptBlock {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
     $null = $commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters
     if ([string]::IsNullOrEmpty($fakeBoundParameters['Scope'])) {
