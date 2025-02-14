@@ -59,7 +59,7 @@ function Get-Font {
         Gets the font with the name 'Calibri' for all users.
 
         .OUTPUTS
-        System.Collections.Generic.List[PSCustomObject].
+        System.Collections.Generic.List[PSCustomObject]
 
         .NOTES
         Returns a list of installed fonts.
