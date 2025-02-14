@@ -3,33 +3,73 @@
 function Get-Font {
     <#
         .SYNOPSIS
-            Retrieves the installed fonts.
+        Retrieves the installed fonts.
 
         .DESCRIPTION
-            Retrieves the installed fonts.
+        Retrieves a list of installed fonts for the current user or all users, depending on the specified scope.
+        Supports filtering by font name using wildcards.
 
         .EXAMPLE
-            Get-Font
+        Get-Font
 
-            Gets all the fonts installed for the current user.
+        Output:
+        ```powershell
+        Name     Path                             Scope
+        ----     ----                             -----
+        Arial    C:\Windows\Fonts\arial.ttf      CurrentUser
+        ```
 
-        .EXAMPLE
-            Get-Font -Name 'Arial*'
-
-            Gets all the fonts installed for the current user that start with 'Arial'.
-
-        .EXAMPLE
-            Get-Font -Scope 'AllUsers'
-
-            Gets all the fonts installed for all users.
+        Gets all the fonts installed for the current user.
 
         .EXAMPLE
-            Get-Font -Name 'Calibri' -Scope 'AllUsers'
+        Get-Font -Name 'Arial*'
 
-            Gets the font with the name 'Calibri' for all users.
+        Output:
+        ```powershell
+        Name       Path                                Scope
+        ----       ----                                -----
+        Arial      C:\Windows\Fonts\arial.ttf         CurrentUser
+        Arial Bold C:\Windows\Fonts\arialbd.ttf       CurrentUser
+        ```
+
+        Gets all the fonts installed for the current user that start with 'Arial'.
+
+        .EXAMPLE
+        Get-Font -Scope 'AllUsers'
+
+        Output:
+        ```powershell
+        Name      Path                               Scope
+        ----      ----                               -----
+        Calibri   C:\Windows\Fonts\calibri.ttf      AllUsers
+        ```
+
+        Gets all the fonts installed for all users.
+
+        .EXAMPLE
+        Get-Font -Name 'Calibri' -Scope 'AllUsers'
+
+        Output:
+        ```powershell
+        Name     Path                               Scope
+        ----     ----                               -----
+        Calibri  C:\Windows\Fonts\calibri.ttf      AllUsers
+        ```
+
+        Gets the font with the name 'Calibri' for all users.
 
         .OUTPUTS
-            [System.Collections.Generic.List[PSCustomObject]]
+        System.Collections.Generic.List[PSCustomObject].
+
+        .NOTES
+        Returns a list of installed fonts.
+        Each font object contains properties:
+        - Name: The font name.
+        - Path: The full file path to the font.
+        - Scope: The scope from which the font is retrieved.
+
+        .LINK
+        https://psmodule.io/Font/Functions/Get-Font
     #>
     [Alias('Get-Fonts')]
     [OutputType([System.Collections.Generic.List[PSCustomObject]])]
