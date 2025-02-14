@@ -1,25 +1,47 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.3' }
-
-function Uninstall-Font {
+﻿function Uninstall-Font {
     <#
         .SYNOPSIS
-            Uninstalls a font from the system.
+        Uninstalls a font from the system.
 
         .DESCRIPTION
-            Uninstalls a font from the system.
+        Uninstalls a font from the system. The function supports removing fonts for either the current user
+        or all users. If attempting to remove a font for all users, administrative privileges are required.
+        The function ensures font files are deleted, and if on Windows, it also unregisters fonts from the registry.
 
         .EXAMPLE
-            Uninstall-Font -Name 'Courier New'
+        Uninstall-Font -Name 'Courier New'
 
-            Uninstalls the 'Courier New' font from the system for the current user.
+        Output:
+        ```powershell
+        VERBOSE: [Uninstall-Font] - [CurrentUser] - [Courier New] - Processing
+        VERBOSE: [Uninstall-Font] - [CurrentUser] - [Courier New] - Removing file [C:\Windows\Fonts\cour.ttf]
+        VERBOSE: [Uninstall-Font] - [CurrentUser] - [Courier New] - Unregistering font [Courier New]
+        VERBOSE: [Uninstall-Font] - [CurrentUser] - [Courier New] - Done
+        ```
+
+        Uninstalls the 'Courier New' font from the system for the current user.
 
         .EXAMPLE
-            Uninstall-Font -Name 'Courier New' -Scope AllUsers
+        Uninstall-Font -Name 'Courier New' -Scope AllUsers
 
-            Uninstalls the Courier New font from the system for all users.
+        Output:
+        ```powershell
+        VERBOSE: [Uninstall-Font] - [AllUsers] - [Courier New] - Processing
+        VERBOSE: [Uninstall-Font] - [AllUsers] - [Courier New] - Removing file [C:\Windows\Fonts\cour.ttf]
+        VERBOSE: [Uninstall-Font] - [AllUsers] - [Courier New] - Unregistering font [Courier New]
+        VERBOSE: [Uninstall-Font] - [AllUsers] - [Courier New] - Done
+        ```
+
+        Uninstalls the 'Courier New' font from the system for all users. Requires administrative privileges.
 
         .OUTPUTS
-            None
+        None
+
+        .NOTES
+        The function does not return any objects.
+
+        .LINK
+        https://psmodule.io/Admin/Functions/Uninstall-Font/
     #>
     [Alias('Uninstall-Fonts')]
     [CmdletBinding()]

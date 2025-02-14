@@ -3,56 +3,105 @@
 function Install-Font {
     <#
         .SYNOPSIS
-            Installs a font in the system
+        Installs a font in the system.
 
         .DESCRIPTION
-            Installs a font in the system
+        Installs a font in the system, either for the current user or all users, depending on the specified scope.
+        If the font is already installed, it can be optionally overwritten using the `-Force` parameter.
+        The function supports both single file installations and batch installations via pipeline input.
+
+        Installing fonts for all users requires administrator privileges.
 
         .EXAMPLE
-            Install-Font -Path C:\FontFiles\Arial.ttf
+        Install-Font -Path C:\FontFiles\Arial.ttf
 
-            Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile.
+        Output:
+        ```powershell
+        Arial.ttf installed for the current user.
+        ```
 
-        .EXAMPLE
-            Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers
-
-            Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users.
-            This requires administrator rights.
-
-        .EXAMPLE
-            Install-Font -Path C:\FontFiles\Arial.ttf -Force
-
-            Installs the font file 'C:\FontFiles\Arial.ttf' to the current user profile.
-            If the font already exists, it will be overwritten.
+        Installs the font file `Arial.ttf` for the current user.
 
         .EXAMPLE
-            Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers -Force
+        Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers
 
-            Installs the font file 'C:\FontFiles\Arial.ttf' so it is available for all users.
-            This requires administrator rights. If the font already exists, it will be overwritten.
+        Output:
+        ```powershell
+        Arial.ttf installed for all users.
+        ```
 
-        .EXAMPLE
-            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font
-
-            Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
-
-        .EXAMPLE
-            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers
-
-            Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
-            This requires administrator rights.
+        Installs the font file `Arial.ttf` system-wide, making it available to all users.
+        This requires administrator rights.
 
         .EXAMPLE
-            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Force
+        Install-Font -Path C:\FontFiles\Arial.ttf -Force
 
-            Gets all font files in the folder 'C:\FontFiles\' and installs them to the current user profile.
-            If the font already exists, it will be overwritten.
+        Output:
+        ```powershell
+        Arial.ttf reinstalled for the current user.
+        ```
+
+        Installs the font file `Arial.ttf` for the current user. If it already exists, it will be overwritten.
 
         .EXAMPLE
-            Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers -Force
+        Install-Font -Path C:\FontFiles\Arial.ttf -Scope AllUsers -Force
 
-            Gets all font files in the folder 'C:\FontFiles\' and installs them so it is available for all users.
-            This requires administrator rights. If the font already exists, it will be overwritten.
+        Output:
+        ```powershell
+        Arial.ttf reinstalled for all users.
+        ```
+
+        Installs the font file `Arial.ttf` system-wide and overwrites the existing font if present.
+
+        .EXAMPLE
+        Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font
+
+        Output:
+        ```powershell
+        Found 3 font files.
+        Arial.ttf installed for the current user.
+        Verdana.ttf installed for the current user.
+        TimesNewRoman.ttf installed for the current user.
+        ```
+
+        Installs all `.ttf` font files found in `C:\FontFiles\` for the current user.
+
+        .EXAMPLE
+        Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers
+
+        Output:
+        ```powershell
+        Found 3 font files.
+        Arial.ttf installed for all users.
+        Verdana.ttf installed for all users.
+        TimesNewRoman.ttf installed for all users.
+        ```
+
+        Installs all `.ttf` font files found in `C:\FontFiles\` system-wide.
+        This requires administrator rights.
+
+        .EXAMPLE
+        Get-ChildItem -Path C:\FontFiles\ -Filter *.ttf | Install-Font -Scope AllUsers -Force
+
+        Output:
+        ```powershell
+        Found 3 font files.
+        Arial.ttf reinstalled for all users.
+        Verdana.ttf reinstalled for all users.
+        TimesNewRoman.ttf reinstalled for all users.
+        ```
+
+        Installs all `.ttf` font files found in `C:\FontFiles\` system-wide, overwriting existing fonts.
+        This requires administrator rights.
+
+        .OUTPUTS
+        System.String
+
+        .NOTES
+        Returns messages indicating success or failure of font installation.
+
+        .LINK
+        https://psmodule.io/Admin/Functions/Install-Font/
     #>
     [Alias('Install-Fonts')]
     [CmdletBinding(SupportsShouldProcess)]
@@ -70,13 +119,13 @@ function Install-Font {
         # CurrentUser will install the font for the current user only.
         # AllUsers will install the font so it is available for all users on the system.
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Scope[]] $Scope = 'CurrentUser',
+        [string] $Scope = 'CurrentUser',
 
         # Recurse will install all fonts in the specified folder and subfolders.
         [Parameter()]
         [switch] $Recurse,
 
-        # Force will overwrite existing fonts
+        # Force will overwrite existing fonts.
         [Parameter()]
         [switch] $Force
     )
