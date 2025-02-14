@@ -3,7 +3,7 @@
 function Get-Font {
     <#
         .SYNOPSIS
-            Retrieves the installed fonts.
+            Retrieves the installed fonts. Uri, Api, file name.
 
         .DESCRIPTION
             Retrieves the installed fonts.
