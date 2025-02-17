@@ -3,6 +3,9 @@
 This is a PowerShell module for managing fonts.
 It helps you to install, uninstall and list fonts on the system.
 
+This module only provides the functionality to manage fonts on the system. To install popular fonts on the system,
+please review the [NerdFonts](https://github.com/PSModule/NerdFonts) and [GoogleFonts](https://github.com/PSModule/GoogleFonts) modules.
+
 ## Supported platforms
 
 This module supports managing fonts on Linux, macOS and Windows operating systems.
