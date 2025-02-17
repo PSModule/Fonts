@@ -40,7 +40,7 @@ Get-Font -Name 'Casc*', 'Hack Nerd Font*' -Verbose
 
 Get-Font -Name 'Casc*', 'Ha*' -Scope AllUsers, CurrentUser -Verbose
 
-'Casc*','Ha*' | Get-Font -Scope AllUsers, CurrentUser -Verbose
+'Casc*', 'Ha*' | Get-Font -Scope AllUsers, CurrentUser -Verbose
 
 
 Get-Font -Name 'Casc*'
