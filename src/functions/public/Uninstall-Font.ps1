@@ -123,7 +123,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         }
                     }
 
-                    if ($IsWindows) {
+                    if ($script:OS -eq 'Windows') {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Searching for font in registry"
                         $keys = Get-ItemProperty -Path $script:FontRegPathMap[$scopeName]
                         $key = $keys.PSObject.Properties | Where-Object { $_.Value -eq $filePath }

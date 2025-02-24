@@ -226,7 +226,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                     if (-not $fileCopied) {
                         continue
                     }
-                    if ($IsWindows) {
+                    if ($script:OS -eq 'Windows') {
                         $fontType = $script:SupportedFonts | Where-Object { $_.Extension -eq $fontExtension } | Select-Object -ExpandProperty Type
                         $registeredFontName = "$fontName ($fontType)"
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontFilePath] - Registering font as [$registeredFontName]"
