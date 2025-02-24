@@ -18,7 +18,7 @@ $script:FontFolderPathMap = @{
     }
 }
 
-$script:OS = if ($IsWindows) {
+$script:OS = if ($IsWindows -or $PSEdition -eq 'Desktop') {
     'Windows'
 } elseif ($IsLinux) {
     'Linux'
