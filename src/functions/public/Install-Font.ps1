@@ -1,6 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.3' }
-
-function Install-Font {
+﻿function Install-Font {
     <#
         .SYNOPSIS
         Installs a font in the system.
