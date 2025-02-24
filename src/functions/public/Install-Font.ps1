@@ -1,4 +1,6 @@
-﻿function Install-Font {
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.5' }
+
+function Install-Font {
     <#
         .SYNOPSIS
         Installs a font in the system.
@@ -117,7 +119,8 @@
         # CurrentUser will install the font for the current user only.
         # AllUsers will install the font so it is available for all users on the system.
         [Parameter(ValueFromPipelineByPropertyName)]
-        [string] $Scope = 'CurrentUser',
+        [ValidateSet('CurrentUser', 'AllUsers')]
+        [string[]] $Scope = 'CurrentUser',
 
         # Recurse will install all fonts in the specified folder and subfolders.
         [Parameter()]
@@ -146,8 +149,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     process {
         $scopeCount = $Scope.Count
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
-        foreach ($scopeItem in $Scope) {
-            $scopeName = $scopeItem.ToString()
+        foreach ($scopeName in $Scope) {
             $fontDestinationFolderPath = $script:FontFolderPathMap[$script:OS][$scopeName]
             $pathCount = $Path.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$pathCount] path(s)"
