@@ -59,7 +59,8 @@
         # CurrentUser will uninstall the font for the current user.
         # AllUsers will uninstall the font so it is removed for all users.
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Scope[]] $Scope = 'CurrentUser'
+        [ValidateSet('CurrentUser', 'AllUsers')]
+        [string[]] $Scope = 'CurrentUser'
     )
 
     begin {
@@ -80,9 +81,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
     process {
         $scopeCount = $Scope.Count
         Write-Verbose "[$functionName] - Processing [$scopeCount] scopes(s)"
-        foreach ($scopeItem in $Scope) {
-            $scopeName = $scopeItem.ToString()
-
+        foreach ($scopeName in $Scope) {
             $nameCount = $Name.Count
             Write-Verbose "[$functionName] - [$scopeName] - Processing [$nameCount] font(s)"
             foreach ($fontName in $Name) {
@@ -124,7 +123,7 @@ Please run the command again with elevated rights (Run as Administrator) or prov
                         }
                     }
 
-                    if ($IsWindows) {
+                    if ($script:OS -eq 'Windows') {
                         Write-Verbose "[$functionName] - [$scopeName] - [$fontName] - Searching for font in registry"
                         $keys = Get-ItemProperty -Path $script:FontRegPathMap[$scopeName]
                         $key = $keys.PSObject.Properties | Where-Object { $_.Value -eq $filePath }

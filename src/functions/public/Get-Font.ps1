@@ -1,4 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.3' }
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.5' }
 
 function Get-Font {
     <#
@@ -85,7 +85,8 @@ function Get-Font {
 
         # Specifies the scope of the font(s) to get.
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Scope[]] $Scope = 'CurrentUser'
+        [ValidateSet('CurrentUser', 'AllUsers')]
+        [string[]] $Scope = 'CurrentUser'
     )
 
     begin {
@@ -96,8 +97,7 @@ function Get-Font {
     process {
         $scopeCount = $Scope.Count
         Write-Verbose "[$functionName] - Processing [$scopeCount] scope(s)"
-        foreach ($ScopeItem in $Scope) {
-            $scopeName = $ScopeItem.ToString()
+        foreach ($scopeName in $Scope) {
 
             Write-Verbose "[$functionName] - [$scopeName] - Getting font(s)"
             $fontFolderPath = $script:FontFolderPathMap[$script:OS][$scopeName]
