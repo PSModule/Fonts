@@ -1,4 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.5' }
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.6' }
 
 function Get-Font {
     <#
