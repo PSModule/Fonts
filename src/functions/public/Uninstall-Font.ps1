@@ -1,4 +1,6 @@
-﻿function Uninstall-Font {
+﻿#Requires -Modules @{ ModuleName = 'Admin'; RequiredVersion = '1.1.6' }
+
+function Uninstall-Font {
     <#
         .SYNOPSIS
         Uninstalls a font from the system.
@@ -41,7 +43,7 @@
         The function does not return any objects.
 
         .LINK
-        https://psmodule.io/Admin/Functions/Uninstall-Font/
+        https://psmodule.io/Fonts/Functions/Uninstall-Font/
     #>
     [Alias('Uninstall-Fonts')]
     [CmdletBinding()]

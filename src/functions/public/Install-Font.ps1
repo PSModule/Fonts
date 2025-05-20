@@ -101,7 +101,7 @@ function Install-Font {
         Returns messages indicating success or failure of font installation.
 
         .LINK
-        https://psmodule.io/Admin/Functions/Install-Font/
+        https://psmodule.io/Fonts/Functions/Install-Font/
     #>
     [Alias('Install-Fonts')]
     [CmdletBinding(SupportsShouldProcess)]

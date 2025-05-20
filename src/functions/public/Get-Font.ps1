@@ -16,7 +16,7 @@ function Get-Font {
         ```powershell
         Name     Path                             Scope
         ----     ----                             -----
-        Arial    C:\Windows\Fonts\arial.ttf      CurrentUser
+        Arial    C:\Windows\Fonts\arial.ttf       CurrentUser
         ```
 
         Gets all the fonts installed for the current user.
@@ -28,8 +28,8 @@ function Get-Font {
         ```powershell
         Name       Path                                Scope
         ----       ----                                -----
-        Arial      C:\Windows\Fonts\arial.ttf         CurrentUser
-        Arial Bold C:\Windows\Fonts\arialbd.ttf       CurrentUser
+        Arial      C:\Windows\Fonts\arial.ttf          CurrentUser
+        Arial Bold C:\Windows\Fonts\arialbd.ttf        CurrentUser
         ```
 
         Gets all the fonts installed for the current user that start with 'Arial'.
@@ -41,7 +41,7 @@ function Get-Font {
         ```powershell
         Name      Path                               Scope
         ----      ----                               -----
-        Calibri   C:\Windows\Fonts\calibri.ttf      AllUsers
+        Calibri   C:\Windows\Fonts\calibri.ttf       AllUsers
         ```
 
         Gets all the fonts installed for all users.
@@ -53,7 +53,7 @@ function Get-Font {
         ```powershell
         Name     Path                               Scope
         ----     ----                               -----
-        Calibri  C:\Windows\Fonts\calibri.ttf      AllUsers
+        Calibri  C:\Windows\Fonts\calibri.ttf       AllUsers
         ```
 
         Gets the font with the name 'Calibri' for all users.
@@ -69,7 +69,7 @@ function Get-Font {
         - Scope: The scope from which the font is retrieved.
 
         .LINK
-        https://psmodule.io/Font/Functions/Get-Font
+        https://psmodule.io/Fonts/Functions/Get-Font/
     #>
     [Alias('Get-Fonts')]
     [OutputType([System.Collections.Generic.List[PSCustomObject]])]
