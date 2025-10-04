@@ -4,7 +4,7 @@
 
 Test:
   CodeCoverage:
-    PercentTarget: 0
+    PercentTarget: 80
 #   TestResults:
 #     Skip: true
 #   SourceCode:
