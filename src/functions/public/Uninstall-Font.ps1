@@ -1,4 +1,4 @@
-﻿#Requires -Modules @{ ModuleName = 'Admin'; ModuleVersion = '1.1.6' }
+﻿#Requires -Modules @{ ModuleName = 'Admin'; ModuleVersion = '1.1.13' }
 
 function Uninstall-Font {
     <#
