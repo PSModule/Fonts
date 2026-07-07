@@ -1,4 +1,6 @@
-﻿Describe 'Fonts' {
+﻿#Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '6.0.0'; MaximumVersion = '6.*'; GUID = 'a699dea5-2c73-4616-a270-1f7abb777e71' }
+
+Describe 'Fonts' {
     Context 'Function: Get-Font' {
         It 'The function should be available' {
             Get-Command -Name 'Get-Font' | Should -Not -BeNull
