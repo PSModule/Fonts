@@ -20,17 +20,21 @@ Import-Module -Name Fonts
 
 ## Usage
 
-Use the module to list, install, and uninstall fonts on your system.
+Use the module to list, install, and uninstall fonts on your system. Fonts are managed for the current user by
+default; pass `-Scope AllUsers` to manage fonts for every user, which requires elevated privileges (administrator
+on Windows, root on Linux and macOS). On Windows the module also registers or unregisters fonts in the Windows
+registry so applications can find them; on Linux and macOS it manages the font files in the appropriate font
+directories.
 
 ### Example: List installed fonts
 
-List all fonts installed in the current user context:
+List all fonts installed for the current user:
 
 ```powershell
 Get-Font
 ```
 
-List all fonts installed in the system context. On Windows this lists the fonts in the `C:\Windows\Fonts` folder:
+List all fonts installed for all users:
 
 ```powershell
 Get-Font -Scope AllUsers
@@ -38,31 +42,27 @@ Get-Font -Scope AllUsers
 
 ### Example: Install a font
 
-Install a font in the current user context. This installs the font in the user font folder and updates the
-registry so it is available to the current user:
+Install a font for the current user:
 
 ```powershell
-Install-Font -Path 'C:\path\to\font.ttf'
+Install-Font -Path ./MyFont.ttf
 ```
 
-Install a font for all users. This must run as an administrator, installs the font in the `C:\Windows\Fonts`
-folder, and updates the registry so it is available to every user on the system:
+Install a font for all users (requires elevated privileges):
 
 ```powershell
-Install-Font -Path 'C:\path\to\font.ttf' -Scope AllUsers
+Install-Font -Path ./MyFont.ttf -Scope AllUsers
 ```
 
 ### Example: Uninstall a font
 
-Uninstall a font from the current user context. This removes the font from the user font folder and updates the
-registry to remove it from the current user:
+Uninstall a font for the current user:
 
 ```powershell
 Uninstall-Font -Name 'FontName'
 ```
 
-Uninstall a font for all users. This must run as an administrator, removes the font from the `C:\Windows\Fonts`
-folder, and updates the registry to remove it from every user on the system:
+Uninstall a font for all users (requires elevated privileges):
 
 ```powershell
 Uninstall-Font -Name 'FontName' -Scope AllUsers
