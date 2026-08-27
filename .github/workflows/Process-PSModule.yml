@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -13,19 +16,21 @@ on:
       - reopened
       - synchronize
       - labeled
+      - unlabeled
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
-  statuses: write
+  contents: read
   pages: write
   id-token: write
 
 jobs:
   Process-PSModule:
-    uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@11117919e65242d3388727819a751f74ad24ea9e # v5.5.0
-    secrets: inherit
+    uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@v8
+    secrets:
+      PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+      GitHubAppClientId: ${{ secrets.SHELLY_CLIENT_ID }}
+      GitHubAppPrivateKey: ${{ secrets.SHELLY_PRIVATE_KEY }}
