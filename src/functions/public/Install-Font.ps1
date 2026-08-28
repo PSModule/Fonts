@@ -209,11 +209,11 @@ Please run the command again with elevated rights (Run as Administrator) or prov
 
                     do {
                         try {
-                            $null = $fontFile.CopyTo($fontDestinationFilePath)
+                            $null = $fontFile.CopyTo($fontDestinationFilePath, $Force.IsPresent)
                             $fileCopied = $true
                         } catch {
                             $retryCount++
-                            if (-not $fileRemoved -and $retryCount -eq $maxRetries) {
+                            if (-not $fileCopied -and $retryCount -eq $maxRetries) {
                                 Write-Error $_
                                 Write-Error "Failed [$retryCount/$maxRetries] - Stopping"
                                 break
