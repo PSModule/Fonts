@@ -28,8 +28,6 @@ logo = "https://raw.githubusercontent.com/PSModule/Fonts/main/icon/icon.png"
 favicon = "https://raw.githubusercontent.com/PSModule/Fonts/main/icon/icon.png"
 features = [
   "announce.dismiss",
-  "content.action.edit",
-  "content.action.view",
   "content.code.annotate",
   "content.code.copy",
   "content.tooltips",
