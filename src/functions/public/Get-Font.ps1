@@ -105,7 +105,7 @@ function Get-Font {
             $folderExists = Test-Path -Path $fontFolderPath
             Write-Verbose "[$functionName] - [$scopeName] - Folder exists: [$folderExists]"
             if (-not $folderExists) {
-                return $fonts
+                continue
             }
             $installedFonts = Get-ChildItem -Path $fontFolderPath -File
             $installedFontsCount = $($installedFonts.Count)

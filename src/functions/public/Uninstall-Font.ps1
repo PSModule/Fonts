@@ -71,7 +71,7 @@ function Uninstall-Font {
 
         if ($Scope -contains 'AllUsers' -and -not (IsAdmin)) {
             $errorMessage = @"
-Administrator rights are required to uninstall fonts in [$($script:FontFolderPath['AllUsers'])].
+Administrator rights are required to uninstall fonts in [$($script:FontFolderPathMap[$script:OS]['AllUsers'])].
 Please run the command again with elevated rights (Run as Administrator) or provide '-Scope CurrentUser' to your command.
 "@
             throw $errorMessage
