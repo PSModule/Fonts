@@ -20,15 +20,6 @@ extra_css = [
   # Pin the current Process-PSModule navigation behavior used as the baseline.
   "https://cdn.jsdelivr.net/gh/PSModule/Process-PSModule@59e056cab018777a8f158f88fcabdb57125494ef/docs/overrides/assets/stylesheets/navigation.css",
 ]
-nav = [
-  {"Home" = "README.md"},
-  {"Commands" = [
-    {"Get-Font" = "Functions/Get-Font.md"},
-    {"Install-Font" = "Functions/Install-Font.md"},
-    {"Uninstall-Font" = "Functions/Uninstall-Font.md"},
-  ]},
-]
-
 [project.theme]
 language = "en"
 font.text = "Mona Sans"
