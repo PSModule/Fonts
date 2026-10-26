@@ -9,6 +9,7 @@ please review the [NerdFonts](https://github.com/PSModule/NerdFonts) and [Google
 ## Supported platforms
 
 This module supports managing fonts on Linux, macOS and Windows operating systems.
+The minimum PowerShell version is 5.1, including Windows PowerShell 5.1.
 
 ## Installation
 
@@ -72,17 +73,12 @@ This will remove the font from the `C:\Windows\Fonts` folder and update the regi
 Uninstall-Font -Name 'FontName' -Scope AllUsers # You can tab complete the font name
 ```
 
-## Contributing
+## Documentation
 
-Coder or not, you can contribute to the project! We welcome all contributions.
+Documentation is published at [psmodule.io/Fonts](https://psmodule.io/Fonts/).
+Use PowerShell help for command details and examples:
 
-### For Users
-
-If you don't code, you still sit on valuable information that can make this project even better. If you experience that the
-product does unexpected things, throw errors or is missing functionality, you can help by submitting bugs and feature requests.
-Please see the issues tab on this project and submit a new issue that matches your needs.
-
-### For Developers
-
-If you do code, we'd love to have your contributions. Please read the [Contribution guidelines](CONTRIBUTING.md) for more information.
-You can either help by picking up an existing issue or submit a new one if you have an idea for a new feature or improvement.
+```powershell
+Get-Command -Module Fonts
+Get-Help -Name Install-Font -Examples
+```
